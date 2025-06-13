@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Formulario de Pedido</title>
+</head>
+<body>
+
+  <h2>Seleccionar Vendedor</h2>
+
+  <label for="vendedor">Vendedor:</label>
+  <select id="vendedor">
+    <option disabled selected>Selecciona un vendedor</option>
+  </select>
+
+  <script type="module">
+    const SUPABASE_URL = 'https://gedrcazwwzarxjxbtgnd.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlZHJjYXp3d3phcnhqeGJ0Z25kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk3NDQxOTAsImV4cCI6MjA2NTMyMDE5MH0.aQwEviYlvjyYZVIjbJUDM2YgEDOKTaNK65nno4iVtiY';
+
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function cargarVendedores() {
+      const { data, error } = await supabase
+        .from('vendedores')
+        .select('id, nombre');
+
+      if (error) {
+        console.error('❌ Error al obtener vendedores:', error.message);
+        return;
+      }
+
+      const select = document.getElementById('vendedor');
+      data.forEach(vendedor => {
+        const option = document.createElement('option');
+        option.value = vendedor.id;
+        option.textContent = vendedor.nombre;
+        select.appendChild(option);
+      });
+    }
+
+    cargarVendedores();
+  </script>
+
+</body>
+</html>
