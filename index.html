@@ -41,54 +41,25 @@
     }
 
     function mostrarOpciones(vendedores) {
-  const select = document.getElementById('vendedor');
-  select.innerHTML = '<option disabled selected>Selecciona un vendedor</option>';
-  
-  vendedores.forEach(vendedor => {
-    const option = document.createElement('option');
-    option.value = vendedor.id;
-    option.textContent = vendedor.nombre;
-    select.appendChild(option);
-  });
+      const select = document.getElementById('vendedor');
+      select.innerHTML = '<option disabled selected>Selecciona un vendedor</option>';
+      vendedores.forEach(vendedor => {
+        const option = document.createElement('option');
+        option.value = vendedor.id;
+        option.textContent = vendedor.nombre;
+        select.appendChild(option);
+      });
+    }
 
-  // 🔥 Selección automática si hay solo un resultado
-  if (vendedores.length === 1) {
-    select.value = vendedores[0].id;
-  }
-}
+    document.getElementById('buscador').addEventListener('input', (e) => {
+      const texto = e.target.value.toLowerCase();
+      const filtrados = vendedoresData.filter(v =>
+        v.nombre.toLowerCase().includes(texto)
+      );
+      mostrarOpciones(filtrados);
+    });
 
-let vendedoresData = [];
-
-async function cargarVendedores() {
-  const { data, error } = await supabase
-    .from('vendedores')
-    .select('id, nombre');
-
-  if (error) {
-    console.error('❌ Error al obtener vendedores:', error.message);
-    return;
-  }
-
-  vendedoresData = data;
-  mostrarOpciones(vendedoresData);
-}
-
-// Debounce de 300ms
-let timeoutId;
-document.getElementById('buscador').addEventListener('input', (e) => {
-  const texto = e.target.value.toLowerCase();
-
-  clearTimeout(timeoutId);
-  timeoutId = setTimeout(() => {
-    const filtrados = vendedoresData.filter(v =>
-      v.nombre.toLowerCase().includes(texto)
-    );
-    mostrarOpciones(filtrados);
-  }, 300);
-});
-
-cargarVendedores();
-
+    cargarVendedores();
   </script>
 
 </body>
