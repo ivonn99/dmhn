@@ -8,6 +8,10 @@
 
   <h2>Seleccionar Vendedor</h2>
 
+  <!-- Buscador -->
+  <input type="text" id="buscador" placeholder="Buscar vendedor..." />
+
+  <!-- Select de vendedores -->
   <label for="vendedor">Vendedor:</label>
   <select id="vendedor">
     <option disabled selected>Selecciona un vendedor</option>
@@ -20,6 +24,8 @@
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    let vendedoresData = [];
+
     async function cargarVendedores() {
       const { data, error } = await supabase
         .from('vendedores')
@@ -30,14 +36,28 @@
         return;
       }
 
+      vendedoresData = data;
+      mostrarOpciones(vendedoresData);
+    }
+
+    function mostrarOpciones(vendedores) {
       const select = document.getElementById('vendedor');
-      data.forEach(vendedor => {
+      select.innerHTML = '<option disabled selected>Selecciona un vendedor</option>';
+      vendedores.forEach(vendedor => {
         const option = document.createElement('option');
         option.value = vendedor.id;
         option.textContent = vendedor.nombre;
         select.appendChild(option);
       });
     }
+
+    document.getElementById('buscador').addEventListener('input', (e) => {
+      const texto = e.target.value.toLowerCase();
+      const filtrados = vendedoresData.filter(v =>
+        v.nombre.toLowerCase().includes(texto)
+      );
+      mostrarOpciones(filtrados);
+    });
 
     cargarVendedores();
   </script>
