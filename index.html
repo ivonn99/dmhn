@@ -352,6 +352,7 @@
         select.appendChild(option);
       });
     }
+
     function mostrarOpcionesClientes(clientes) {
       clientesMostrados = clientes;  // Guardamos para usar luego
       const select = document.getElementById('cliente');
@@ -376,6 +377,13 @@
         document.getElementById('precio-producto').textContent = '$0.00';
         document.getElementById('monto-total').textContent = '$0.00';
       }
+    });
+
+    // Al seleccionar un cliente, mostrar su ruta
+    document.getElementById('cliente').addEventListener('change', (e) => {
+      const clienteId = parseInt(e.target.value);
+      const cliente = clientesMostrados.find(c => c.id === clienteId);
+      document.getElementById('ruta-reparto').textContent = cliente?.ruta_reparto || '---';
     });
 
     // Calcular monto total cuando cambia cantidad o precio
@@ -493,11 +501,6 @@
 
     // Event listener para agregar producto
     document.getElementById('agregar-producto').addEventListener('click', agregarProducto);
-    document.getElementById('cliente').addEventListener('change', (e) => {
-      const clienteId = parseInt(e.target.value);
-      const cliente = clientesMostrados.find(c => c.id === clienteId);
-      document.getElementById('ruta-reparto').textContent = cliente?.ruta_reparto || '---';
-    });
 
     // Función debounce para optimizar búsquedas
     function debounce(fn, delay) {
@@ -564,10 +567,14 @@
       }
     }
 
+    // AQUÍ ESTABA EL PROBLEMA - Faltaba conectar el event listener
     const filtroClientesDebounced = debounce((e) => {
       const texto = e.target.value.trim();
       buscarClientesRemoto(texto);
     }, 300);
+
+    // CONECTAR EL EVENT LISTENER QUE FALTABA
+    document.getElementById('buscador-cliente').addEventListener('input', filtroClientesDebounced);
 
     // Búsqueda de productos con debounce
     const filtroProductosDebounced = debounce((e) => {
@@ -682,11 +689,6 @@
       productosEnPedido = [];
       mostrarListaProductos();
       calcularMontoTotalPedido();
-    }
-
-    // Función para limpiar formulario (mantener por compatibilidad)
-    function limpiarFormulario() {
-      limpiarFormularioCompleto();
     }
 
     // Event listener para el botón de guardar
