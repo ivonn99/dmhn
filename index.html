@@ -8,7 +8,7 @@
 
   <h2>Seleccionar Vendedor</h2>
 
-  <!-- Buscador -->
+  <!-- Buscadores -->
   <input type="text" id="buscador" placeholder="Buscar vendedor..." />
   <input type="text" id="buscador-cliente" placeholder="Buscar cliente..." />
 
@@ -32,35 +32,23 @@
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let vendedoresData = [];
-    let clientesData = [];
 
-    async function cargarDatosIniciales() {
-      // Cargar vendedores
-      const { data: vendedores, error: errorV } = await supabase
+    // Cargar vendedores una sola vez (local)
+    async function cargarVendedores() {
+      const { data, error } = await supabase
         .from('vendedores')
         .select('id, nombre');
 
-      if (errorV) {
-        console.error('❌ Error al obtener vendedores:', errorV.message);
-      } else {
-        vendedoresData = vendedores;
-        mostrarOpciones(vendedoresData);
+      if (error) {
+        console.error('❌ Error al obtener vendedores:', error.message);
+        return;
       }
 
-      // Cargar clientes
-      const { data: clientes, error: errorC } = await supabase
-        .from('clientes')
-        .select('id, nombre');
-
-      if (errorC) {
-        console.error('❌ Error al obtener clientes:', errorC.message);
-      } else {
-        clientesData = clientes;
-        mostrarOpcionesClientes(clientesData);
-      }
+      vendedoresData = data;
+      mostrarOpcionesVendedores(vendedoresData);
     }
 
-    function mostrarOpciones(vendedores) {
+    function mostrarOpcionesVendedores(vendedores) {
       const select = document.getElementById('vendedor');
       select.innerHTML = '<option disabled selected>Selecciona un vendedor</option>';
       vendedores.forEach(vendedor => {
@@ -70,6 +58,65 @@
         select.appendChild(option);
       });
     }
+
+    // Filtro local para vendedores con debounce
+    function debounce(fn, delay) {
+      let timeoutId;
+      return function(...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn.apply(this, args), delay);
+      };
+    }
+
+    const filtroVendedoresDebounced = debounce((e) => {
+      const texto = e.target.value.toLowerCase();
+      const filtrados = vendedoresData.filter(v =>
+        v.nombre.toLowerCase().includes(texto)
+      );
+      mostrarOpcionesVendedores(filtrados);
+      if (filtrados.length > 0) {
+        document.getElementById('vendedor').value = filtrados[0].id;
+      } else {
+        document.getElementById('vendedor').value = '';
+      }
+    }, 300);
+
+    document.getElementById('buscador').addEventListener('input', filtroVendedoresDebounced);
+
+    // Búsqueda remota para clientes con debounce
+    async function buscarClientesRemoto(texto) {
+      if (!texto) {
+        mostrarOpcionesClientes([]);
+        return;
+      }
+      const { data, error } = await supabase
+        .from('clientes')
+        .select('id, nombre')
+        .ilike('nombre', `%${texto}%`)
+        .order('nombre', { ascending: true })
+        .limit(20);
+
+      if (error) {
+        console.error('❌ Error al buscar clientes:', error.message);
+        mostrarOpcionesClientes([]);
+        return;
+      }
+
+      mostrarOpcionesClientes(data);
+
+      if (data.length > 0) {
+        document.getElementById('cliente').value = data[0].id;
+      } else {
+        document.getElementById('cliente').value = '';
+      }
+    }
+
+    const filtroClientesDebounced = debounce((e) => {
+      const texto = e.target.value.trim();
+      buscarClientesRemoto(texto);
+    }, 300);
+
+    document.getElementById('buscador-cliente').addEventListener('input', filtroClientesDebounced);
 
     function mostrarOpcionesClientes(clientes) {
       const select = document.getElementById('cliente');
@@ -82,39 +129,8 @@
       });
     }
 
-    // Filtro con selección automática del primer vendedor filtrado
-    document.getElementById('buscador').addEventListener('input', (e) => {
-      const texto = e.target.value.toLowerCase();
-      const filtrados = vendedoresData.filter(v =>
-        v.nombre.toLowerCase().includes(texto)
-      );
-
-      mostrarOpciones(filtrados);
-
-      if (filtrados.length > 0) {
-        document.getElementById('vendedor').value = filtrados[0].id;
-      } else {
-        document.getElementById('vendedor').value = '';
-      }
-    });
-
-    // Filtro con selección automática del primer cliente filtrado
-    document.getElementById('buscador-cliente').addEventListener('input', (e) => {
-      const texto = e.target.value.toLowerCase();
-      const filtrados = clientesData.filter(c =>
-        c.nombre.toLowerCase().includes(texto)
-      );
-
-      mostrarOpcionesClientes(filtrados);
-
-      if (filtrados.length > 0) {
-        document.getElementById('cliente').value = filtrados[0].id;
-      } else {
-        document.getElementById('cliente').value = '';
-      }
-    });
-
-    cargarDatosIniciales();
+    // Cargar vendedores al inicio
+    cargarVendedores();
   </script>
 
 </body>
