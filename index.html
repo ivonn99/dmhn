@@ -10,11 +10,18 @@
 
   <!-- Buscador -->
   <input type="text" id="buscador" placeholder="Buscar vendedor..." />
+  <input type="text" id="buscador-cliente" placeholder="Buscar cliente..." />
 
   <!-- Select de vendedores -->
   <label for="vendedor">Vendedor:</label>
   <select id="vendedor">
     <option disabled selected>Selecciona un vendedor</option>
+  </select>
+
+  <!-- Select de clientes -->
+  <label for="cliente">Cliente:</label>
+  <select id="cliente">
+    <option disabled selected>Selecciona un cliente</option>
   </select>
 
   <script type="module">
@@ -25,19 +32,32 @@
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let vendedoresData = [];
+    let clientesData = [];
 
-    async function cargarVendedores() {
-      const { data, error } = await supabase
+    async function cargarDatosIniciales() {
+      // Cargar vendedores
+      const { data: vendedores, error: errorV } = await supabase
         .from('vendedores')
         .select('id, nombre');
 
-      if (error) {
-        console.error('❌ Error al obtener vendedores:', error.message);
-        return;
+      if (errorV) {
+        console.error('❌ Error al obtener vendedores:', errorV.message);
+      } else {
+        vendedoresData = vendedores;
+        mostrarOpciones(vendedoresData);
       }
 
-      vendedoresData = data;
-      mostrarOpciones(vendedoresData);
+      // Cargar clientes
+      const { data: clientes, error: errorC } = await supabase
+        .from('clientes')
+        .select('id, nombre');
+
+      if (errorC) {
+        console.error('❌ Error al obtener clientes:', errorC.message);
+      } else {
+        clientesData = clientes;
+        mostrarOpcionesClientes(clientesData);
+      }
     }
 
     function mostrarOpciones(vendedores) {
@@ -51,7 +71,18 @@
       });
     }
 
-    // Filtro con selección automática del primer resultado
+    function mostrarOpcionesClientes(clientes) {
+      const select = document.getElementById('cliente');
+      select.innerHTML = '<option disabled selected>Selecciona un cliente</option>';
+      clientes.forEach(cliente => {
+        const option = document.createElement('option');
+        option.value = cliente.id;
+        option.textContent = cliente.nombre;
+        select.appendChild(option);
+      });
+    }
+
+    // Filtro con selección automática del primer vendedor filtrado
     document.getElementById('buscador').addEventListener('input', (e) => {
       const texto = e.target.value.toLowerCase();
       const filtrados = vendedoresData.filter(v =>
@@ -60,7 +91,6 @@
 
       mostrarOpciones(filtrados);
 
-      // Autoselección del primer vendedor filtrado
       if (filtrados.length > 0) {
         document.getElementById('vendedor').value = filtrados[0].id;
       } else {
@@ -68,7 +98,23 @@
       }
     });
 
-    cargarVendedores();
+    // Filtro con selección automática del primer cliente filtrado
+    document.getElementById('buscador-cliente').addEventListener('input', (e) => {
+      const texto = e.target.value.toLowerCase();
+      const filtrados = clientesData.filter(c =>
+        c.nombre.toLowerCase().includes(texto)
+      );
+
+      mostrarOpcionesClientes(filtrados);
+
+      if (filtrados.length > 0) {
+        document.getElementById('cliente').value = filtrados[0].id;
+      } else {
+        document.getElementById('cliente').value = '';
+      }
+    });
+
+    cargarDatosIniciales();
   </script>
 
 </body>
