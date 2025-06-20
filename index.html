@@ -51,12 +51,21 @@
       });
     }
 
+    // Filtro con selección automática del primer resultado
     document.getElementById('buscador').addEventListener('input', (e) => {
       const texto = e.target.value.toLowerCase();
       const filtrados = vendedoresData.filter(v =>
         v.nombre.toLowerCase().includes(texto)
       );
+
       mostrarOpciones(filtrados);
+
+      // Autoselección del primer vendedor filtrado
+      if (filtrados.length > 0) {
+        document.getElementById('vendedor').value = filtrados[0].id;
+      } else {
+        document.getElementById('vendedor').value = '';
+      }
     });
 
     cargarVendedores();
