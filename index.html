@@ -444,28 +444,26 @@
     }
 
     // Mostrar lista de productos
-    function mostrarListaProductos() {
-      const container = document.getElementById('lista-productos');
-      
+     function mostrarListaProductos() {
+      const tbody = document.querySelector('#lista-productos tbody');
+      tbody.innerHTML = '';
+
       if (productosEnPedido.length === 0) {
-        container.innerHTML = '<p>No hay productos agregados</p>';
+        tbody.innerHTML = '<tr><td colspan="5">No hay productos agregados</td></tr>';
         return;
       }
 
-      let html = '';
       productosEnPedido.forEach((item, index) => {
-        html += `
-          <div class="producto-item">
-            <div class="producto-info">
-              <strong>${item.nombre}</strong> (${item.categoria})<br>
-              Cantidad: ${item.cantidad} | Precio: ${item.precio.toFixed(2)} | Subtotal: ${item.monto.toFixed(2)}
-            </div>
-            <button class="btn-eliminar" onclick="eliminarProducto(${index})">Eliminar</button>
-          </div>
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${item.cantidad}</td>
+          <td>${item.nombre} (${item.categoria})</td>
+          <td>${item.precio.toFixed(2)}</td>
+          <td>${item.monto.toFixed(2)}</td>
+          <td><button class="btn-eliminar" onclick="eliminarProducto(${index})">Eliminar</button></td>
         `;
+        tbody.appendChild(fila);
       });
-      
-      container.innerHTML = html;
     }
 
     // Eliminar producto de la lista
