@@ -240,8 +240,6 @@
   <label for="destino">Destino:</label>
   <select id="destino" name="destino" onchange="toggleOtroDestino()" class="form-control">
     <option value="DHL AEROPUERTO" selected>DHL AEROPUERTO</option>
-    <option value="Destino 1">Destino 1</option>
-    <option value="Destino 2">Destino 2</option>
     <option value="Otro">Otro</option>
   </select>
 </div>
@@ -650,6 +648,19 @@
       };
     }
 
+    function toggleOtroDestino() {
+    const seleccion = document.getElementById("destino").value;
+    const otroDiv = document.getElementById("otro-destino-div");
+    const inputOtro = document.getElementById("otro-destino");
+
+    if (seleccion === "Otro") {
+      otroDiv.style.display = "block";
+    } else {
+      otroDiv.style.display = "none";
+      inputOtro.value = ""; // Limpia el campo si se oculta
+    }
+  }
+
     // Filtro local para vendedores con debounce
     const filtroVendedoresDebounced = debounce((e) => {
       const texto = e.target.value.toLowerCase();
@@ -906,19 +917,6 @@ window.addEventListener('click', (e) => {
     modal.style.display = 'none';
   }
 });
-
-function toggleOtroDestino() {
-    const seleccion = document.getElementById("destino").value;
-    const otroDiv = document.getElementById("otro-destino-div");
-    const inputOtro = document.getElementById("otro-destino");
-
-    if (seleccion === "Otro") {
-      otroDiv.style.display = "block";
-    } else {
-      otroDiv.style.display = "none";
-      inputOtro.value = ""; // Limpia el campo si se oculta
-    }
-  }
 
         // Función para limpiar formulario completo (modificada)
     function limpiarFormularioCompleto() {
