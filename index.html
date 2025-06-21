@@ -237,12 +237,6 @@
     <button id="guardar-pedido" type="button">Guardar Pedido</button>
   </div>
 
-  <script>
-    // Reiniciar el select de cantidad a 1 cuando se carga la página
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('cantidad').value = '1';
-    });
-
   <script type="module">
     const SUPABASE_URL = 'https://gedrcazwwzarxjxbtgnd.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdlZHJjYXp3d3phcnhqeGJ0Z25kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk3NDQxOTAsImV4cCI6MjA2NTMyMDE5MH0.aQwEviYlvjyYZVIjbJUDM2YgEDOKTaNK65nno4iVtiY';
@@ -264,6 +258,11 @@
         cargarProductos()
       ]);
     }
+    
+        // Reiniciar el select de cantidad a 1 cuando se carga la página
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('cantidad').value = '1';
+    });
 
     // Cargar vendedores una sola vez (local)
     async function cargarVendedores() {
