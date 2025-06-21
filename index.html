@@ -648,19 +648,6 @@
       };
     }
 
-    function toggleOtroDestino() {
-    const seleccion = document.getElementById("destino").value;
-    const otroDiv = document.getElementById("otro-destino-div");
-    const inputOtro = document.getElementById("otro-destino");
-
-    if (seleccion === "Otro") {
-      otroDiv.style.display = "block";
-    } else {
-      otroDiv.style.display = "none";
-      inputOtro.value = ""; // Limpia el campo si se oculta
-    }
-  }
-
     // Filtro local para vendedores con debounce
     const filtroVendedoresDebounced = debounce((e) => {
       const texto = e.target.value.toLowerCase();
@@ -948,6 +935,23 @@ window.addEventListener('click', (e) => {
     // Cargar datos iniciales
     cargarDatosIniciales();
   </script>
+
+  <script>
+  function toggleOtroDestino() {
+    const select = document.getElementById("destino");
+    const otroDiv = document.getElementById("otro-destino-div");
+    
+    if (select.value === "Otro") {
+      otroDiv.style.display = "block";
+    } else {
+      otroDiv.style.display = "none";
+    }
+  }
+
+  // Ejecutar una vez al cargar la página por si "Otro" está preseleccionado
+  window.onload = toggleOtroDestino;
+</script>
+
 
 </body>
 </html>
