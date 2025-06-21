@@ -6,7 +6,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 1000px;
+      max-width: 800px;
       margin: 0 auto;
       padding: 20px;
     }
@@ -75,215 +75,47 @@
       background-color: #218838;
     }
 
-    #previsualizar-pedido {
-      background-color: #17a2b8;
-    }
-
-    #previsualizar-pedido:hover {
-      background-color: #138496;
-    }
-
-    #enviar-pedido {
-      background-color: #28a745;
-    }
-
-    #enviar-pedido:hover {
-      background-color: #218838;
-    }
-
-    /* Estilos para la tabla */
-    .tabla-productos {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      background-color: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .tabla-productos th,
-    .tabla-productos td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .tabla-productos th {
+    #lista-productos {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      max-height: 300px;
+      overflow-y: auto;
       background-color: #f8f9fa;
-      font-weight: bold;
+    }
+
+    .producto-item {
+      background-color: white;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .producto-info {
+      flex-grow: 1;
+    }
+
+    .producto-info strong {
       color: #495057;
-      border-top: 2px solid #007bff;
-    }
-
-    .tabla-productos tr:hover {
-      background-color: #f5f5f5;
-    }
-
-    .tabla-productos .cantidad {
-      text-align: center;
-      width: 80px;
-    }
-
-    .tabla-productos .precio,
-    .tabla-productos .monto {
-      text-align: right;
-      width: 100px;
-    }
-
-    .tabla-productos .acciones {
-      text-align: center;
-      width: 100px;
     }
 
     .btn-eliminar {
       background-color: #dc3545;
-      padding: 6px 12px;
+      padding: 5px 10px;
       font-size: 12px;
-      margin: 0;
+      margin-left: 10px;
     }
 
     .btn-eliminar:hover {
       background-color: #c82333;
     }
-
-    .tabla-container {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      overflow-x: auto;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .sin-productos {
-      text-align: center;
-      padding: 40px;
-      color: #6c757d;
-      font-style: italic;
-    }
-
-    /* Modal de previsualización */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-content {
-      background-color: white;
-      margin: 5% auto;
-      padding: 30px;
-      border-radius: 8px;
-      width: 80%;
-      max-width: 800px;
-      max-height: 80vh;
-      overflow-y: auto;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 2px solid #007bff;
-    }
-
-    .modal-header h2 {
-      margin: 0;
-      color: #007bff;
-    }
-
-    .close {
-      color: #aaa;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-      line-height: 1;
-    }
-
-    .close:hover {
-      color: #000;
-    }
-
-    .resumen-section {
-      margin-bottom: 25px;
-      padding: 15px;
-      border: 1px solid #e9ecef;
-      border-radius: 6px;
-      background-color: #f8f9fa;
-    }
-
-    .resumen-section h3 {
-      margin-top: 0;
-      margin-bottom: 15px;
-      color: #495057;
-      border-bottom: 1px solid #dee2e6;
-      padding-bottom: 8px;
-    }
-
-    .resumen-field {
-      margin-bottom: 8px;
-    }
-
-    .resumen-field strong {
-      color: #495057;
-      display: inline-block;
-      width: 120px;
-    }
-
-    .total-final {
-      font-size: 1.2em;
-      font-weight: bold;
-      color: #28a745;
-      text-align: right;
-      margin-top: 15px;
-      padding: 10px;
-      background-color: #d4edda;
-      border-radius: 4px;
-    }
-
-    .modal-buttons {
-      text-align: right;
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid #dee2e6;
-    }
-
-    .modal-buttons button {
-      margin-left: 10px;
-    }
-
-    .mensaje-exito {
-      background-color: #d4edda;
-      color: #155724;
-      padding: 15px;
-      border-radius: 4px;
-      margin-bottom: 20px;
-      border: 1px solid #c3e6cb;
-      display: none;
-    }
-
-    .mensaje-error {
-      background-color: #f8d7da;
-      color: #721c24;
-      padding: 15px;
-      border-radius: 4px;
-      margin-bottom: 20px;
-      border: 1px solid #f5c6cb;
-      display: none;
-    }
   </style>
 </head>
 <body>
-
-  <!-- Mensajes de estado -->
-  <div id="mensaje-exito" class="mensaje-exito"></div>
-  <div id="mensaje-error" class="mensaje-error"></div>
 
   <h2>Formulario de Pedido</h2>
 
@@ -334,6 +166,12 @@
   </div>
 
   <!-- Sección de Productos -->
+  <!-- Cantidad -->
+  <div class="form-group">
+    <label for="cantidad">Cantidad:</label>
+    <input type="number" id="cantidad" min="1" step="0.1" placeholder="Cantidad" />
+  </div>
+
   <div class="form-group">
     <label for="buscador-producto">Buscar Producto:</label>
     <input type="text" id="buscador-producto" placeholder="Buscar producto..." />
@@ -352,18 +190,6 @@
     <div id="precio-producto">$0.00</div>
   </div>
 
-  <!-- Cantidad -->
-  <div class="form-group">
-    <label for="cantidad">Cantidad:</label>
-    <input type="number" id="cantidad" min="1" step="0.1" placeholder="Cantidad" />
-  </div>
-
-  <!-- Precio personalizado (opcional) -->
-  <div class="form-group">
-    <label for="precio-custom">Precio Personalizado (opcional):</label>
-    <input type="number" id="precio-custom" step="0.01" placeholder="Dejar vacío para usar precio por defecto" />
-  </div>
-
   <!-- Monto total -->
   <div class="form-group">
     <label for="monto-total">Monto Total:</label>
@@ -375,26 +201,11 @@
     <button id="agregar-producto" type="button">Agregar Producto</button>
   </div>
 
-  <!-- Tabla de productos agregados -->
+  <!-- Lista de productos agregados -->
   <div class="form-group">
     <h3>Productos en el Pedido:</h3>
-    <div class="tabla-container">
-      <table class="tabla-productos" id="tabla-productos">
-        <thead>
-          <tr>
-            <th class="cantidad">Cantidad</th>
-            <th>Producto</th>
-            <th class="precio">Precio</th>
-            <th class="monto">Monto</th>
-            <th class="acciones">Acción</th>
-          </tr>
-        </thead>
-        <tbody id="tbody-productos">
-          <tr>
-            <td colspan="5" class="sin-productos">No hay productos agregados</td>
-          </tr>
-        </tbody>
-      </table>
+    <div id="lista-productos">
+      <p>No hay productos agregados</p>
     </div>
   </div>
 
@@ -415,28 +226,9 @@
     <textarea id="comentarios" rows="3" placeholder="Comentarios adicionales"></textarea>
   </div>
 
-  <!-- Botón para previsualizar pedido -->
+  <!-- Botón para guardar pedido -->
   <div class="form-group">
-    <button id="previsualizar-pedido" type="button">Previsualizar Pedido</button>
-  </div>
-
-  <!-- Modal de previsualización -->
-  <div id="modal-preview" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Resumen del Pedido</h2>
-        <span class="close">&times;</span>
-      </div>
-      
-      <div id="contenido-preview">
-        <!-- El contenido se generará dinámicamente -->
-      </div>
-      
-      <div class="modal-buttons">
-        <button type="button" onclick="cerrarModal()">Cancelar</button>
-        <button id="enviar-pedido" type="button">Enviar Pedido</button>
-      </div>
-    </div>
+    <button id="guardar-pedido" type="button">Guardar Pedido</button>
   </div>
 
   <script type="module">
@@ -446,56 +238,30 @@
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Variables globales
     let vendedoresData = [];
     let clientesMostrados = [];
     let productosData = [];
     let zonasEntregaData = [];
-    let productosEnPedido = [];
+    let productosEnPedido = []; // Lista de productos agregados al pedido
 
-    // Función debounce para optimizar búsquedas
-    function debounce(fn, delay) {
-      let timeoutId;
-      return function(...args) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => fn.apply(this, args), delay);
-      };
+    // Cargar datos iniciales
+    async function cargarDatosIniciales() {
+      await Promise.all([
+        cargarVendedores(),
+        cargarZonasEntrega(),
+        cargarProductos()
+      ]);
     }
 
-    // Funciones de utilidad para mensajes
-    function mostrarMensajeExito(mensaje) {
-      const elemento = document.getElementById('mensaje-exito');
-      elemento.textContent = mensaje;
-      elemento.style.display = 'block';
-      document.getElementById('mensaje-error').style.display = 'none';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      setTimeout(() => {
-        elemento.style.display = 'none';
-      }, 5000);
-    }
-
-    function mostrarMensajeError(mensaje) {
-      const elemento = document.getElementById('mensaje-error');
-      elemento.textContent = mensaje;
-      elemento.style.display = 'block';
-      document.getElementById('mensaje-exito').style.display = 'none';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      setTimeout(() => {
-        elemento.style.display = 'none';
-      }, 5000);
-    }
-
-    // Funciones para cargar datos
+    // Cargar vendedores una sola vez (local)
     async function cargarVendedores() {
       try {
         const { data, error } = await supabase
           .from('vendedores')
-          .select('id, nombre')
-          .order('nombre', { ascending: true });
+          .select('id, nombre');
 
         if (error) {
           console.error('❌ Error al obtener vendedores:', error.message);
-          mostrarMensajeError('Error al cargar vendedores');
           return;
         }
 
@@ -503,10 +269,10 @@
         mostrarOpcionesVendedores(vendedoresData);
       } catch (err) {
         console.error('❌ Error de conexión:', err);
-        mostrarMensajeError('Error de conexión al cargar vendedores');
       }
     }
 
+    // Cargar zonas de entrega
     async function cargarZonasEntrega() {
       try {
         const { data, error } = await supabase
@@ -516,7 +282,6 @@
 
         if (error) {
           console.error('❌ Error al obtener zonas de entrega:', error.message);
-          mostrarMensajeError('Error al cargar zonas de entrega');
           return;
         }
 
@@ -524,10 +289,10 @@
         mostrarOpcionesZonasEntrega(data);
       } catch (err) {
         console.error('❌ Error de conexión:', err);
-        mostrarMensajeError('Error de conexión al cargar zonas de entrega');
       }
     }
 
+    // Cargar productos
     async function cargarProductos() {
       try {
         const { data, error } = await supabase
@@ -537,7 +302,6 @@
 
         if (error) {
           console.error('❌ Error al obtener productos:', error.message);
-          mostrarMensajeError('Error al cargar productos');
           return;
         }
 
@@ -545,11 +309,10 @@
         mostrarOpcionesProductos(productosData);
       } catch (err) {
         console.error('❌ Error de conexión:', err);
-        mostrarMensajeError('Error de conexión al cargar productos');
       }
     }
 
-    // Funciones para mostrar opciones en selects
+    // Mostrar opciones de vendedores
     function mostrarOpcionesVendedores(vendedores) {
       const select = document.getElementById('vendedor');
       select.innerHTML = '<option disabled selected>Selecciona un vendedor</option>';
@@ -561,6 +324,7 @@
       });
     }
 
+    // Mostrar opciones de zonas de entrega
     function mostrarOpcionesZonasEntrega(zonas) {
       const select = document.getElementById('zona-entrega');
       select.innerHTML = '<option disabled selected>Selecciona una zona de entrega</option>';
@@ -572,19 +336,20 @@
       });
     }
 
+    // Mostrar opciones de productos
     function mostrarOpcionesProductos(productos) {
       const select = document.getElementById('producto');
       select.innerHTML = '<option disabled selected>Selecciona un producto</option>';
       productos.forEach(producto => {
         const option = document.createElement('option');
         option.value = producto.id;
-        option.textContent = `${producto.nombre} - ${producto.categoria} ($${producto.precio})`;
+        option.textContent = `${producto.nombre} - ${producto.categoria} (${producto.precio})`;
         select.appendChild(option);
       });
     }
 
     function mostrarOpcionesClientes(clientes) {
-      clientesMostrados = clientes;
+      clientesMostrados = clientes;  // Guardamos para usar luego
       const select = document.getElementById('cliente');
       select.innerHTML = '<option disabled selected>Selecciona un cliente</option>';
       clientes.forEach(cliente => {
@@ -595,7 +360,167 @@
       });
     }
 
-    // Función para buscar clientes
+    // Al seleccionar un producto, mostrar su precio
+    document.getElementById('producto').addEventListener('change', (e) => {
+      const productoId = parseInt(e.target.value);
+      const producto = productosData.find(p => p.id === productoId);
+      
+      if (producto) {
+        document.getElementById('precio-producto').textContent = `${producto.precio}`;
+        calcularMontoTotal();
+      } else {
+        document.getElementById('precio-producto').textContent = '$0.00';
+        document.getElementById('monto-total').textContent = '$0.00';
+      }
+    });
+
+    // Al seleccionar un cliente, mostrar su ruta
+    document.getElementById('cliente').addEventListener('change', (e) => {
+      const clienteId = parseInt(e.target.value);
+      const cliente = clientesMostrados.find(c => c.id === clienteId);
+      document.getElementById('ruta-reparto').textContent = cliente?.ruta_reparto || '---';
+    });
+
+    // Calcular monto total cuando cambia cantidad o precio
+    function calcularMontoTotal() {
+      const productoId = parseInt(document.getElementById('producto').value);
+      const producto = productosData.find(p => p.id === productoId);
+      const cantidad = parseFloat(document.getElementById('cantidad').value) || 0;
+      
+      if (producto && cantidad > 0) {
+        const precio = producto.precio;
+        const monto = cantidad * precio;
+        document.getElementById('monto-total').textContent = `${monto.toFixed(2)}`;
+      } else {
+        document.getElementById('monto-total').textContent = '$0.00';
+      }
+    }
+
+    // Event listeners para recalcular monto
+    document.getElementById('cantidad').addEventListener('input', calcularMontoTotal);
+
+    // Función para agregar producto a la lista
+    function agregarProducto() {
+      const productoId = parseInt(document.getElementById('producto').value);
+      const cantidad = parseFloat(document.getElementById('cantidad').value);
+
+      // Validaciones
+      if (!productoId) {
+        alert('Por favor selecciona un producto');
+        return;
+      }
+      if (!cantidad || cantidad <= 0) {
+        alert('Por favor ingresa una cantidad válida');
+        return;
+      }
+
+      const producto = productosData.find(p => p.id === productoId);
+      const precio = producto.precio;
+      const monto = cantidad * precio;
+
+      // Verificar si el producto ya está en la lista
+      const productoExistente = productosEnPedido.find(p => p.productoId === productoId);
+      
+      if (productoExistente) {
+        // Si existe, sumar la cantidad
+        productoExistente.cantidad += cantidad;
+        productoExistente.monto = productoExistente.cantidad * productoExistente.precio;
+      } else {
+        // Si no existe, agregar nuevo
+        productosEnPedido.push({
+          productoId: productoId,
+          nombre: producto.nombre,
+          categoria: producto.categoria,
+          cantidad: cantidad,
+          precio: precio,
+          monto: monto
+        });
+      }
+
+      // Actualizar la vista
+      mostrarListaProductos();
+      calcularMontoTotalPedido();
+      limpiarCamposProducto();
+    }
+
+    // Mostrar lista de productos
+    function mostrarListaProductos() {
+      const container = document.getElementById('lista-productos');
+      
+      if (productosEnPedido.length === 0) {
+        container.innerHTML = '<p>No hay productos agregados</p>';
+        return;
+      }
+
+      let html = '';
+      productosEnPedido.forEach((item, index) => {
+        html += `
+          <div class="producto-item">
+            <div class="producto-info">
+              <strong>${item.nombre}</strong> (${item.categoria})<br>
+              Cantidad: ${item.cantidad} | Precio: ${item.precio.toFixed(2)} | Subtotal: ${item.monto.toFixed(2)}
+            </div>
+            <button class="btn-eliminar" onclick="eliminarProducto(${index})">Eliminar</button>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    // Eliminar producto de la lista
+    window.eliminarProducto = function(index) {
+      productosEnPedido.splice(index, 1);
+      mostrarListaProductos();
+      calcularMontoTotalPedido();
+    }
+
+    // Calcular monto total del pedido
+    function calcularMontoTotalPedido() {
+      const total = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
+      document.getElementById('monto-pedido-total').textContent = `${total.toFixed(2)}`;
+    }
+
+    // Limpiar campos de producto después de agregar
+    function limpiarCamposProducto() {
+      document.getElementById('buscador-producto').value = '';
+      document.getElementById('producto').value = '';
+      document.getElementById('cantidad').value = '';
+      document.getElementById('precio-producto').textContent = '$0.00';
+      document.getElementById('monto-total').textContent = '$0.00';
+    }
+
+    // Event listener para agregar producto
+    document.getElementById('agregar-producto').addEventListener('click', agregarProducto);
+
+    // Función debounce para optimizar búsquedas
+    function debounce(fn, delay) {
+      let timeoutId;
+      return function(...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn.apply(this, args), delay);
+      };
+    }
+
+    // Filtro local para vendedores con debounce
+    const filtroVendedoresDebounced = debounce((e) => {
+      const texto = e.target.value.toLowerCase();
+      const filtrados = vendedoresData.filter(v =>
+        v.nombre.toLowerCase().includes(texto)
+      );
+      mostrarOpcionesVendedores(filtrados);
+      
+      // Auto-seleccionar el primer resultado
+      if (filtrados.length > 0) {
+        document.getElementById('vendedor').value = filtrados[0].id;
+      } else {
+        document.getElementById('vendedor').value = '';
+      }
+    }, 300);
+
+    document.getElementById('buscador').addEventListener('input', filtroVendedoresDebounced);
+
+    // Búsqueda remota para clientes con debounce
     async function buscarClientesRemoto(texto) {
       if (!texto) {
         mostrarOpcionesClientes([]);
@@ -619,6 +544,7 @@
 
         mostrarOpcionesClientes(data);
 
+        // Auto-seleccionar el primer resultado y mostrar su ruta
         if (data.length > 0) {
           document.getElementById('cliente').value = data[0].id;
           document.getElementById('ruta-reparto').textContent = data[0].ruta_reparto || '---';
@@ -632,108 +558,48 @@
       }
     }
 
-    // Funciones para calcular montos
-    function calcularMontoTotal() {
-      const productoId = parseInt(document.getElementById('producto').value);
-      const producto = productosData.find(p => p.id === productoId);
-      const cantidad = parseFloat(document.getElementById('cantidad').value) || 0;
-      const precioCustom = parseFloat(document.getElementById('precio-custom').value);
+    // AQUÍ ESTABA EL PROBLEMA - Faltaba conectar el event listener
+    const filtroClientesDebounced = debounce((e) => {
+      const texto = e.target.value.trim();
+      buscarClientesRemoto(texto);
+    }, 300);
+
+    // CONECTAR EL EVENT LISTENER QUE FALTABA
+    document.getElementById('buscador-cliente').addEventListener('input', filtroClientesDebounced);
+
+    // Búsqueda de productos con debounce
+    const filtroProductosDebounced = debounce((e) => {
+      const texto = e.target.value.toLowerCase();
+      const filtrados = productosData.filter(p =>
+        p.nombre.toLowerCase().includes(texto) ||
+        p.categoria.toLowerCase().includes(texto)
+      );
+      mostrarOpcionesProductos(filtrados);
       
-      if (producto && cantidad > 0) {
-        const precio = precioCustom || producto.precio;
-        const monto = cantidad * precio;
-        document.getElementById('monto-total').textContent = `$${monto.toFixed(2)}`;
+      // Auto-seleccionar el primer resultado
+      if (filtrados.length > 0) {
+        document.getElementById('producto').value = filtrados[0].id;
+        document.getElementById('precio-producto').textContent = `${filtrados[0].precio}`;
+        calcularMontoTotal();
       } else {
+        document.getElementById('producto').value = '';
+        document.getElementById('precio-producto').textContent = '$0.00';
         document.getElementById('monto-total').textContent = '$0.00';
       }
-    }
+    }, 300);
 
-    function calcularMontoTotalPedido() {
-      const total = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
-      document.getElementById('monto-pedido-total').textContent = `$${total.toFixed(2)}`;
-    }
+    document.getElementById('buscador-producto').addEventListener('input', filtroProductosDebounced);
 
-    // Funciones para manejo de productos
-    function agregarProducto() {
-      const productoId = parseInt(document.getElementById('producto').value);
-      const cantidad = parseFloat(document.getElementById('cantidad').value);
-      const precioCustom = parseFloat(document.getElementById('precio-custom').value);
-
-      if (!productoId) {
-        alert('Por favor selecciona un producto');
-        return;
-      }
-      if (!cantidad || cantidad <= 0) {
-        alert('Por favor ingresa una cantidad válida');
-        return;
-      }
-
-      const producto = productosData.find(p => p.id === productoId);
-      const precio = precioCustom || producto.precio;
-      const monto = cantidad * precio;
-
-      const productoExistente = productosEnPedido.find(p => p.productoId === productoId && p.precio === precio);
-      
-      if (productoExistente) {
-        productoExistente.cantidad += cantidad;
-        productoExistente.monto = productoExistente.cantidad * productoExistente.precio;
-      } else {
-        productosEnPedido.push({
-          productoId: productoId,
-          nombre: producto.nombre,
-          categoria: producto.categoria,
-          cantidad: cantidad,
-          precio: precio,
-          monto: monto
-        });
-      }
-
-      mostrarTablaProductos();
-      calcularMontoTotalPedido();
-      limpiarCamposProducto();
-    }
-
-    function mostrarTablaProductos() {
-      const tbody = document.getElementById('tbody-productos');
-      
-      if (productosEnPedido.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="sin-productos">No hay productos agregados</td></tr>';
-        return;
-      }
-
-      let html = '';
-      productosEnPedido.forEach((item, index) => {
-        html += `
-          <tr>
-            <td class="cantidad">${item.cantidad}</td>
-            <td><strong>${item.nombre}</strong><br><small>${item.categoria}</small></td>
-            <td class="precio">$${item.precio.toFixed(2)}</td>
-            <td class="monto">$${item.monto.toFixed(2)}</td>
-            <td class="acciones">
-              <button class="btn-eliminar" onclick="app.eliminarProducto(${index})">Eliminar</button>
-            </td>
-          </tr>
-        `;
-      });
-      
-      tbody.innerHTML = html;
-    }
-
-    function limpiarCamposProducto() {
-      document.getElementById('buscador-producto').value = '';
-      document.getElementById('producto').value = '';
-      document.getElementById('cantidad').value = '';
-      document.getElementById('precio-custom').value = '';
-      document.getElementById('precio-producto').textContent = '$0.00';
-      document.getElementById('monto-total').textContent = '$0.00';
-    }
-
-    // Función para previsualizar pedido
-    function previsualizarPedido() {
+    // Función para guardar pedido (modificada para múltiples productos)
+    async function guardarPedido() {
       const vendedorId = parseInt(document.getElementById('vendedor').value);
       const clienteId = parseInt(document.getElementById('cliente').value);
       const zonaEntregaId = parseInt(document.getElementById('zona-entrega').value);
+      const otroDestino = document.getElementById('otro-destino').value.trim();
+      const oferta = document.getElementById('oferta').value.trim();
+      const comentarios = document.getElementById('comentarios').value.trim();
 
+      // Validaciones
       if (!vendedorId || !clienteId || !zonaEntregaId) {
         alert('Por favor completa todos los campos obligatorios (Vendedor, Cliente, Zona de Entrega)');
         return;
@@ -744,75 +610,15 @@
         return;
       }
 
-      const vendedor = vendedoresData.find(v => v.id === vendedorId);
-      const cliente = clientesMostrados.find(c => c.id === clienteId);
-      const zonaEntrega = zonasEntregaData.find(z => z.id === zonaEntregaId);
-      const otroDestino = document.getElementById('otro-destino').value.trim();
-      const oferta = document.getElementById('oferta').value.trim();
-      const comentarios = document.getElementById('comentarios').value.trim();
-
-      const total = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
-
-      let html = `
-        <div class="resumen-section">
-          <h3>Información General</h3>
-          <div class="resumen-field"><strong>Vendedor:</strong> ${vendedor.nombre}</div>
-          <div class="resumen-field"><strong>Cliente:</strong> ${cliente.nombre}</div>
-          <div class="resumen-field"><strong>Ruta:</strong> ${cliente.ruta_reparto || '---'}</div>
-          <div class="resumen-field"><strong>Zona de Entrega:</strong> ${zonaEntrega.nombre}</div>
-          ${otroDestino ? `<div class="resumen-field"><strong>Otro Destino:</strong> ${otroDestino}</div>` : ''}
-          ${oferta ? `<div class="resumen-field"><strong>Oferta:</strong> ${oferta}</div>` : ''}
-          ${comentarios ? `<div class="resumen-field"><strong>Comentarios:</strong> ${comentarios}</div>` : ''}
-        </div>
-
-        <div class="resumen-section">
-          <h3>Productos</h3>
-          <table class="tabla-productos" style="margin: 0;">
-            <thead>
-              <tr>
-                <th class="cantidad">Cantidad</th>
-                <th>Producto</th>
-                <th class="precio">Precio</th>
-                <th class="monto">Monto</th>
-              </tr>
-            </thead>
-            <tbody>
-      `;
-
-      productosEnPedido.forEach(item => {
-        html += `
-          <tr>
-            <td class="cantidad">${item.cantidad}</td>
-            <td><strong>${item.nombre}</strong><br><small>${item.categoria}</small></td>
-            <td class="precio">$${item.precio.toFixed(2)}</td>
-            <td class="monto">$${item.monto.toFixed(2)}</td>
-          </tr>
-        `;
-      });
-
-      html += `
-            </tbody>
-          </table>
-        </div>
-        <div class="total-final">TOTAL: $${total.toFixed(2)}</div>
-      `;
-
-      document.getElementById('contenido-preview').innerHTML = html;
-      document.getElementById('modal-preview').style.display = 'block';
-    }
-
-    // Función para enviar pedido
-    async function enviarPedido() {
-      const vendedorId = parseInt(document.getElementById('vendedor').value);
-      const clienteId = parseInt(document.getElementById('cliente').value);
-      const zonaEntregaId = parseInt(document.getElementById('zona-entrega').value);
-      const otroDestino = document.getElementById('otro-destino').value.trim();
-      const oferta = document.getElementById('oferta').value.trim();
-      const comentarios = document.getElementById('comentarios').value.trim();
+      // Deshabilitar botón mientras se guarda
+      const btnGuardar = document.getElementById('guardar-pedido');
+      btnGuardar.disabled = true;
+      btnGuardar.textContent = 'Guardando...';
 
       try {
-        // Crear múltiples registros en la tabla pedidos (uno por producto)
-        const pedidosParaInsertar = productosEnPedido.map(item => ({
+        // Preparar array de inserciones
+        const fechaActual = new Date().toISOString();
+        const insertData = productosEnPedido.map(item => ({
           cliente_id: clienteId,
           vendedor_id: vendedorId,
           producto_id: item.productoId,
@@ -820,20 +626,68 @@
           cantidad: item.cantidad,
           precio: item.precio,
           monto: item.monto,
-          fecha: new Date().toISOString(),
+          fecha: fechaActual,
           otro_destino: otroDestino || null,
           oferta: oferta || null,
           comentarios: comentarios || null
         }));
 
+        // Insertar todos los productos del pedido
         const { data, error } = await supabase
           .from('pedidos')
-          .insert(pedidosParaInsertar);
+          .insert(insertData);
 
         if (error) {
-          console.error('❌ Error al enviar pedido:', error.message);
-          mostrarMensajeError('Error al enviar el pedido: ' + error.message);
+          console.error('❌ Error al guardar pedido:', error.message);
+          alert('Error al guardar el pedido: ' + error.message);
           return;
         }
 
-        // Limpiar formulario
+        const totalProductos = productosEnPedido.length;
+        const montoTotal = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
+        
+        alert(`¡Pedido guardado exitosamente!\n${totalProductos} productos por un total de ${montoTotal.toFixed(2)}`);
+        limpiarFormularioCompleto();
+      } catch (err) {
+        console.error('❌ Error de conexión:', err);
+        alert('Error de conexión al guardar el pedido');
+      } finally {
+        // Rehabilitar botón
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = 'Guardar Pedido';
+      }
+    }
+
+    // Función para limpiar formulario completo (modificada)
+    function limpiarFormularioCompleto() {
+      // Limpiar campos básicos
+      document.getElementById('buscador').value = '';
+      document.getElementById('vendedor').value = '';
+      document.getElementById('buscador-cliente').value = '';
+      document.getElementById('cliente').value = '';
+      document.getElementById('ruta-reparto').textContent = '---';
+      document.getElementById('zona-entrega').value = '';
+      
+      // Limpiar campos de producto
+      limpiarCamposProducto();
+      
+      // Limpiar campos adicionales
+      document.getElementById('otro-destino').value = '';
+      document.getElementById('oferta').value = '';
+      document.getElementById('comentarios').value = '';
+      
+      // Limpiar lista de productos
+      productosEnPedido = [];
+      mostrarListaProductos();
+      calcularMontoTotalPedido();
+    }
+
+    // Event listener para el botón de guardar
+    document.getElementById('guardar-pedido').addEventListener('click', guardarPedido);
+
+    // Cargar datos iniciales
+    cargarDatosIniciales();
+  </script>
+
+</body>
+</html>
