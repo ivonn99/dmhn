@@ -6,7 +6,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 800px;
+      max-width: 1000px;
       margin: 0 auto;
       padding: 20px;
     }
@@ -75,43 +75,187 @@
       background-color: #218838;
     }
 
-    #lista-productos {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 15px;
-      max-height: 300px;
-      overflow-y: auto;
-      background-color: #f8f9fa;
+    #previsualizar-pedido {
+      background-color: #17a2b8;
     }
 
-    .producto-item {
+    #previsualizar-pedido:hover {
+      background-color: #138496;
+    }
+
+    #enviar-pedido {
+      background-color: #28a745;
+    }
+
+    #enviar-pedido:hover {
+      background-color: #218838;
+    }
+
+    /* Estilos para la tabla */
+    .tabla-productos {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
       background-color: white;
-      border: 1px solid #dee2e6;
-      border-radius: 4px;
-      padding: 10px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    .producto-info {
-      flex-grow: 1;
+    .tabla-productos th,
+    .tabla-productos td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
     }
 
-    .producto-info strong {
+    .tabla-productos th {
+      background-color: #f8f9fa;
+      font-weight: bold;
       color: #495057;
+      border-top: 2px solid #007bff;
+    }
+
+    .tabla-productos tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .tabla-productos .cantidad {
+      text-align: center;
+      width: 80px;
+    }
+
+    .tabla-productos .precio,
+    .tabla-productos .monto {
+      text-align: right;
+      width: 100px;
+    }
+
+    .tabla-productos .acciones {
+      text-align: center;
+      width: 100px;
     }
 
     .btn-eliminar {
       background-color: #dc3545;
-      padding: 5px 10px;
+      padding: 6px 12px;
       font-size: 12px;
-      margin-left: 10px;
+      margin: 0;
     }
 
     .btn-eliminar:hover {
       background-color: #c82333;
+    }
+
+    .tabla-container {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow-x: auto;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .sin-productos {
+      text-align: center;
+      padding: 40px;
+      color: #6c757d;
+      font-style: italic;
+    }
+
+    /* Modal de previsualización */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 800px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #007bff;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      color: #007bff;
+    }
+
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    .resumen-section {
+      margin-bottom: 25px;
+      padding: 15px;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      background-color: #f8f9fa;
+    }
+
+    .resumen-section h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #495057;
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 8px;
+    }
+
+    .resumen-field {
+      margin-bottom: 8px;
+    }
+
+    .resumen-field strong {
+      color: #495057;
+      display: inline-block;
+      width: 120px;
+    }
+
+    .total-final {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #28a745;
+      text-align: right;
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #d4edda;
+      border-radius: 4px;
+    }
+
+    .modal-buttons {
+      text-align: right;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #dee2e6;
+    }
+
+    .modal-buttons button {
+      margin-left: 10px;
     }
   </style>
 </head>
@@ -159,6 +303,12 @@
     </select>
   </div>
 
+  <!-- Otro Destino -->
+  <div class="form-group">
+    <label for="otro-destino">Otro Destino (opcional):</label>
+    <input type="text" id="otro-destino" placeholder="Dirección alternativa" />
+  </div>
+
   <!-- Sección de Productos -->
   <div class="form-group">
     <label for="buscador-producto">Buscar Producto:</label>
@@ -201,11 +351,26 @@
     <button id="agregar-producto" type="button">Agregar Producto</button>
   </div>
 
-  <!-- Lista de productos agregados -->
+  <!-- Tabla de productos agregados -->
   <div class="form-group">
     <h3>Productos en el Pedido:</h3>
-    <div id="lista-productos">
-      <p>No hay productos agregados</p>
+    <div class="tabla-container">
+      <table class="tabla-productos" id="tabla-productos">
+        <thead>
+          <tr>
+            <th class="cantidad">Cantidad</th>
+            <th>Producto</th>
+            <th class="precio">Precio</th>
+            <th class="monto">Monto</th>
+            <th class="acciones">Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-productos">
+          <tr>
+            <td colspan="5" class="sin-productos">No hay productos agregados</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -217,11 +382,6 @@
 
   <!-- Campos adicionales -->
   <div class="form-group">
-    <label for="otro-destino">Otro Destino (opcional):</label>
-    <input type="text" id="otro-destino" placeholder="Dirección alternativa" />
-  </div>
-
-  <div class="form-group">
     <label for="oferta">Oferta (opcional):</label>
     <input type="text" id="oferta" placeholder="Descripción de oferta" />
   </div>
@@ -231,9 +391,28 @@
     <textarea id="comentarios" rows="3" placeholder="Comentarios adicionales"></textarea>
   </div>
 
-  <!-- Botón para guardar pedido -->
+  <!-- Botón para previsualizar pedido -->
   <div class="form-group">
-    <button id="guardar-pedido" type="button">Guardar Pedido</button>
+    <button id="previsualizar-pedido" type="button">Previsualizar Pedido</button>
+  </div>
+
+  <!-- Modal de previsualización -->
+  <div id="modal-preview" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Resumen del Pedido</h2>
+        <span class="close">&times;</span>
+      </div>
+      
+      <div id="contenido-preview">
+        <!-- El contenido se generará dinámicamente -->
+      </div>
+      
+      <div class="modal-buttons">
+        <button type="button" onclick="cerrarModal()">Cancelar</button>
+        <button id="enviar-pedido" type="button">Enviar Pedido</button>
+      </div>
+    </div>
   </div>
 
   <script type="module">
@@ -446,47 +625,49 @@
       }
 
       // Actualizar la vista
-      mostrarListaProductos();
+      mostrarTablaProductos();
       calcularMontoTotalPedido();
       limpiarCamposProducto();
     }
 
-    // Mostrar lista de productos
-    function mostrarListaProductos() {
-      const container = document.getElementById('lista-productos');
+    // Mostrar tabla de productos
+    function mostrarTablaProductos() {
+      const tbody = document.getElementById('tbody-productos');
       
       if (productosEnPedido.length === 0) {
-        container.innerHTML = '<p>No hay productos agregados</p>';
+        tbody.innerHTML = '<tr><td colspan="5" class="sin-productos">No hay productos agregados</td></tr>';
         return;
       }
 
       let html = '';
       productosEnPedido.forEach((item, index) => {
         html += `
-          <div class="producto-item">
-            <div class="producto-info">
-              <strong>${item.nombre}</strong> (${item.categoria})<br>
-              Cantidad: ${item.cantidad} | Precio: ${item.precio.toFixed(2)} | Subtotal: ${item.monto.toFixed(2)}
-            </div>
-            <button class="btn-eliminar" onclick="eliminarProducto(${index})">Eliminar</button>
-          </div>
+          <tr>
+            <td class="cantidad">${item.cantidad}</td>
+            <td><strong>${item.nombre}</strong><br><small>${item.categoria}</small></td>
+            <td class="precio">${item.precio.toFixed(2)}</td>
+            <td class="monto">${item.monto.toFixed(2)}</td>
+            <td class="acciones">
+              <button class="btn-eliminar" onclick="eliminarProducto(${index})">Eliminar</button>
+            </td>
+          </tr>
         `;
       });
       
-      container.innerHTML = html;
+      tbody.innerHTML = html;
     }
 
     // Eliminar producto de la lista
     window.eliminarProducto = function(index) {
       productosEnPedido.splice(index, 1);
-      mostrarListaProductos();
+      mostrarTablaProductos();
       calcularMontoTotalPedido();
     }
 
     // Calcular monto total del pedido
     function calcularMontoTotalPedido() {
       const total = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
-      document.getElementById('monto-pedido-total').textContent = `${total.toFixed(2)}`;
+      document.getElementById('monto-pedido-total').textContent = `$${total.toFixed(2)}`;
     }
 
     // Limpiar campos de producto después de agregar
@@ -567,13 +748,11 @@
       }
     }
 
-    // AQUÍ ESTABA EL PROBLEMA - Faltaba conectar el event listener
     const filtroClientesDebounced = debounce((e) => {
       const texto = e.target.value.trim();
       buscarClientesRemoto(texto);
     }, 300);
 
-    // CONECTAR EL EVENT LISTENER QUE FALTABA
     document.getElementById('buscador-cliente').addEventListener('input', filtroClientesDebounced);
 
     // Búsqueda de productos con debounce
@@ -599,8 +778,8 @@
 
     document.getElementById('buscador-producto').addEventListener('input', filtroProductosDebounced);
 
-    // Función para guardar pedido (modificada para múltiples productos)
-    async function guardarPedido() {
+    // Función para previsualizar pedido
+    function previsualizarPedido() {
       const vendedorId = parseInt(document.getElementById('vendedor').value);
       const clienteId = parseInt(document.getElementById('cliente').value);
       const zonaEntregaId = parseInt(document.getElementById('zona-entrega').value);
@@ -619,84 +798,41 @@
         return;
       }
 
-      // Deshabilitar botón mientras se guarda
-      const btnGuardar = document.getElementById('guardar-pedido');
-      btnGuardar.disabled = true;
-      btnGuardar.textContent = 'Guardando...';
+      // Obtener datos para mostrar
+      const vendedor = vendedoresData.find(v => v.id === vendedorId);
+      const cliente = clientesMostrados.find(c => c.id === clienteId);
+      const zonaEntrega = zonasEntregaData.find(z => z.id === zonaEntregaId);
+      const totalPedido = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
 
-      try {
-        // Preparar array de inserciones
-        const fechaActual = new Date().toISOString();
-        const insertData = productosEnPedido.map(item => ({
-          cliente_id: clienteId,
-          vendedor_id: vendedorId,
-          producto_id: item.productoId,
-          zona_entrega_id: zonaEntregaId,
-          cantidad: item.cantidad,
-          precio: item.precio,
-          monto: item.monto,
-          fecha: fechaActual,
-          otro_destino: otroDestino || null,
-          oferta: oferta || null,
-          comentarios: comentarios || null
-        }));
+      // Generar HTML del resumen
+      let html = `
+        <div class="resumen-section">
+          <h3>Información General</h3>
+          <div class="resumen-field"><strong>Vendedor:</strong> ${vendedor.nombre}</div>
+          <div class="resumen-field"><strong>Cliente:</strong> ${cliente.nombre}</div>
+          <div class="resumen-field"><strong>Ruta:</strong> ${cliente.ruta_reparto || 'No especificada'}</div>
+          <div class="resumen-field"><strong>Zona de Entrega:</strong> ${zonaEntrega.nombre}</div>
+          ${otroDestino ? `<div class="resumen-field"><strong>Otro Destino:</strong> ${otroDestino}</div>` : ''}
+        </div>
 
-        // Insertar todos los productos del pedido
-        const { data, error } = await supabase
-          .from('pedidos')
-          .insert(insertData);
+        <div class="resumen-section">
+          <h3>Productos del Pedido</h3>
+          <table class="tabla-productos">
+            <thead>
+              <tr>
+                <th class="cantidad">Cantidad</th>
+                <th>Producto</th>
+                <th class="precio">Precio</th>
+                <th class="monto">Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
 
-        if (error) {
-          console.error('❌ Error al guardar pedido:', error.message);
-          alert('Error al guardar el pedido: ' + error.message);
-          return;
-        }
-
-        const totalProductos = productosEnPedido.length;
-        const montoTotal = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
-        
-        alert(`¡Pedido guardado exitosamente!\n${totalProductos} productos por un total de ${montoTotal.toFixed(2)}`);
-        limpiarFormularioCompleto();
-      } catch (err) {
-        console.error('❌ Error de conexión:', err);
-        alert('Error de conexión al guardar el pedido');
-      } finally {
-        // Rehabilitar botón
-        btnGuardar.disabled = false;
-        btnGuardar.textContent = 'Guardar Pedido';
-      }
-    }
-
-    // Función para limpiar formulario completo (modificada)
-    function limpiarFormularioCompleto() {
-      // Limpiar campos básicos
-      document.getElementById('buscador').value = '';
-      document.getElementById('vendedor').value = '';
-      document.getElementById('buscador-cliente').value = '';
-      document.getElementById('cliente').value = '';
-      document.getElementById('ruta-reparto').textContent = '---';
-      document.getElementById('zona-entrega').value = '';
-      
-      // Limpiar campos de producto
-      limpiarCamposProducto();
-      
-      // Limpiar campos adicionales
-      document.getElementById('otro-destino').value = '';
-      document.getElementById('oferta').value = '';
-      document.getElementById('comentarios').value = '';
-      
-      // Limpiar lista de productos
-      productosEnPedido = [];
-      mostrarListaProductos();
-      calcularMontoTotalPedido();
-    }
-
-    // Event listener para el botón de guardar
-    document.getElementById('guardar-pedido').addEventListener('click', guardarPedido);
-
-    // Cargar datos iniciales
-    cargarDatosIniciales();
-  </script>
-
-</body>
-</html>
+      productosEnPedido.forEach(item => {
+        html += `
+          <tr>
+            <td><strong>${item.nombre}</strong><br><small>${item.categoria}</small></td>
+            <td class="cantidad">${item.cantidad}</td>
+            <td class="precio">$${item.precio.toFixed(2)}</td>
+            <td class="monto">$${item.monto.toFixed(2)
