@@ -236,10 +236,21 @@
   </div>
 
   <!-- Otro Destino -->
-  <div class="form-group">
-    <label for="otro-destino">Otro Destino:</label>
-    <input type="text" id="otro-destino" placeholder="Dirección alternativa" />
-  </div>
+ <div class="form-group">
+  <label for="destino">Destino:</label>
+  <select id="destino" name="destino" onchange="toggleOtroDestino()" class="form-control">
+    <option value="DHL AEROPUERTO" selected>DHL AEROPUERTO</option>
+    <option value="Destino 1">Destino 1</option>
+    <option value="Destino 2">Destino 2</option>
+    <option value="Otro">Otro</option>
+  </select>
+</div>
+
+<!-- Campo para escribir otro destino (oculto por defecto) -->
+<div class="form-group" id="otro-destino-div" style="display: none;">
+  <label for="otro-destino">Otro Destino:</label>
+  <input type="text" id="otro-destino" placeholder="Dirección alternativa" class="form-control" />
+</div>
 
   <!-- Sección de Productos -->
   <div class="form-group">
@@ -895,6 +906,19 @@ window.addEventListener('click', (e) => {
     modal.style.display = 'none';
   }
 });
+
+function toggleOtroDestino() {
+    const seleccion = document.getElementById("destino").value;
+    const otroDiv = document.getElementById("otro-destino-div");
+    const inputOtro = document.getElementById("otro-destino");
+
+    if (seleccion === "Otro") {
+      otroDiv.style.display = "block";
+    } else {
+      otroDiv.style.display = "none";
+      inputOtro.value = ""; // Limpia el campo si se oculta
+    }
+  }
 
         // Función para limpiar formulario completo (modificada)
     function limpiarFormularioCompleto() {
