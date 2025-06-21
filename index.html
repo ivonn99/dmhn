@@ -257,9 +257,33 @@
     .modal-buttons button {
       margin-left: 10px;
     }
+
+    .mensaje-exito {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      border: 1px solid #c3e6cb;
+      display: none;
+    }
+
+    .mensaje-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      border: 1px solid #f5c6cb;
+      display: none;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Mensajes de estado -->
+  <div id="mensaje-exito" class="mensaje-exito"></div>
+  <div id="mensaje-error" class="mensaje-error"></div>
 
   <h2>Formulario de Pedido</h2>
 
@@ -446,6 +470,7 @@
 
         if (error) {
           console.error('❌ Error al obtener vendedores:', error.message);
+          mostrarMensajeError('Error al cargar vendedores');
           return;
         }
 
@@ -453,6 +478,7 @@
         mostrarOpcionesVendedores(vendedoresData);
       } catch (err) {
         console.error('❌ Error de conexión:', err);
+        mostrarMensajeError('Error de conexión al cargar vendedores');
       }
     }
 
@@ -466,6 +492,7 @@
 
         if (error) {
           console.error('❌ Error al obtener zonas de entrega:', error.message);
+          mostrarMensajeError('Error al cargar zonas de entrega');
           return;
         }
 
@@ -473,6 +500,7 @@
         mostrarOpcionesZonasEntrega(data);
       } catch (err) {
         console.error('❌ Error de conexión:', err);
+        mostrarMensajeError('Error de conexión al cargar zonas de entrega');
       }
     }
 
@@ -486,6 +514,7 @@
 
         if (error) {
           console.error('❌ Error al obtener productos:', error.message);
+          mostrarMensajeError('Error al cargar productos');
           return;
         }
 
@@ -493,6 +522,7 @@
         mostrarOpcionesProductos(productosData);
       } catch (err) {
         console.error('❌ Error de conexión:', err);
+        mostrarMensajeError('Error de conexión al cargar productos');
       }
     }
 
@@ -527,7 +557,7 @@
       productos.forEach(producto => {
         const option = document.createElement('option');
         option.value = producto.id;
-        option.textContent = `${producto.nombre} - ${producto.categoria} (${producto.precio})`;
+        option.textContent = `${producto.nombre} - ${producto.categoria} ($${producto.precio})`;
         select.appendChild(option);
       });
     }
@@ -544,13 +574,45 @@
       });
     }
 
+    // Función para mostrar mensajes de éxito
+    function mostrarMensajeExito(mensaje) {
+      const elemento = document.getElementById('mensaje-exito');
+      elemento.textContent = mensaje;
+      elemento.style.display = 'block';
+      document.getElementById('mensaje-error').style.display = 'none';
+      
+      // Scroll hacia arriba para mostrar el mensaje
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Auto-ocultar después de 5 segundos
+      setTimeout(() => {
+        elemento.style.display = 'none';
+      }, 5000);
+    }
+
+    // Función para mostrar mensajes de error
+    function mostrarMensajeError(mensaje) {
+      const elemento = document.getElementById('mensaje-error');
+      elemento.textContent = mensaje;
+      elemento.style.display = 'block';
+      document.getElementById('mensaje-exito').style.display = 'none';
+      
+      // Scroll hacia arriba para mostrar el mensaje
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Auto-ocultar después de 5 segundos
+      setTimeout(() => {
+        elemento.style.display = 'none';
+      }, 5000);
+    }
+
     // Al seleccionar un producto, mostrar su precio
     document.getElementById('producto').addEventListener('change', (e) => {
       const productoId = parseInt(e.target.value);
       const producto = productosData.find(p => p.id === productoId);
       
       if (producto) {
-        document.getElementById('precio-producto').textContent = `${producto.precio}`;
+        document.getElementById('precio-producto').textContent = `$${producto.precio}`;
         calcularMontoTotal();
       } else {
         document.getElementById('precio-producto').textContent = '$0.00';
@@ -575,7 +637,7 @@
       if (producto && cantidad > 0) {
         const precio = precioCustom || producto.precio;
         const monto = cantidad * precio;
-        document.getElementById('monto-total').textContent = `${monto.toFixed(2)}`;
+        document.getElementById('monto-total').textContent = `$${monto.toFixed(2)}`;
       } else {
         document.getElementById('monto-total').textContent = '$0.00';
       }
@@ -645,8 +707,8 @@
           <tr>
             <td class="cantidad">${item.cantidad}</td>
             <td><strong>${item.nombre}</strong><br><small>${item.categoria}</small></td>
-            <td class="precio">${item.precio.toFixed(2)}</td>
-            <td class="monto">${item.monto.toFixed(2)}</td>
+            <td class="precio">$${item.precio.toFixed(2)}</td>
+            <td class="monto">$${item.monto.toFixed(2)}</td>
             <td class="acciones">
               <button class="btn-eliminar" onclick="eliminarProducto(${index})">Eliminar</button>
             </td>
@@ -767,7 +829,7 @@
       // Auto-seleccionar el primer resultado
       if (filtrados.length > 0) {
         document.getElementById('producto').value = filtrados[0].id;
-        document.getElementById('precio-producto').textContent = `${filtrados[0].precio}`;
+        document.getElementById('precio-producto').textContent = `$${filtrados[0].precio}`;
         calcularMontoTotal();
       } else {
         document.getElementById('producto').value = '';
@@ -789,50 +851,4 @@
 
       // Validaciones
       if (!vendedorId || !clienteId || !zonaEntregaId) {
-        alert('Por favor completa todos los campos obligatorios (Vendedor, Cliente, Zona de Entrega)');
-        return;
-      }
-
-      if (productosEnPedido.length === 0) {
-        alert('Por favor agrega al menos un producto al pedido');
-        return;
-      }
-
-      // Obtener datos para mostrar
-      const vendedor = vendedoresData.find(v => v.id === vendedorId);
-      const cliente = clientesMostrados.find(c => c.id === clienteId);
-      const zonaEntrega = zonasEntregaData.find(z => z.id === zonaEntregaId);
-      const totalPedido = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
-
-      // Generar HTML del resumen
-      let html = `
-        <div class="resumen-section">
-          <h3>Información General</h3>
-          <div class="resumen-field"><strong>Vendedor:</strong> ${vendedor.nombre}</div>
-          <div class="resumen-field"><strong>Cliente:</strong> ${cliente.nombre}</div>
-          <div class="resumen-field"><strong>Ruta:</strong> ${cliente.ruta_reparto || 'No especificada'}</div>
-          <div class="resumen-field"><strong>Zona de Entrega:</strong> ${zonaEntrega.nombre}</div>
-          ${otroDestino ? `<div class="resumen-field"><strong>Otro Destino:</strong> ${otroDestino}</div>` : ''}
-        </div>
-
-        <div class="resumen-section">
-          <h3>Productos del Pedido</h3>
-          <table class="tabla-productos">
-            <thead>
-              <tr>
-                <th class="cantidad">Cantidad</th>
-                <th>Producto</th>
-                <th class="precio">Precio</th>
-                <th class="monto">Monto</th>
-              </tr>
-            </thead>
-            <tbody>
-      `;
-
-      productosEnPedido.forEach(item => {
-        html += `
-          <tr>
-            <td><strong>${item.nombre}</strong><br><small>${item.categoria}</small></td>
-            <td class="cantidad">${item.cantidad}</td>
-            <td class="precio">$${item.precio.toFixed(2)}</td>
-            <td class="monto">$${item.monto.toFixed(2)
+        alert('Por favor completa todos los campos obligatorios (
