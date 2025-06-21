@@ -10,42 +10,24 @@
       margin: 0 auto;
       padding: 20px;
     }
-    
     .form-group {
       margin-bottom: 15px;
     }
-    
     label {
       display: block;
       margin-bottom: 5px;
       font-weight: bold;
     }
-    
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 8px;
       border: 1px solid #ddd;
       border-radius: 4px;
       box-sizing: border-box;
     }
-    
-    #ruta-reparto, #precio-producto, #monto-total, #monto-pedido-total {
-      padding: 8px;
-      background-color: #f5f5f5;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-weight: bold;
-    }
-
     textarea {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
       resize: vertical;
     }
-
     button {
       background-color: #007bff;
       color: white;
@@ -57,67 +39,56 @@
       font-weight: bold;
       margin-right: 10px;
     }
-
     button:hover {
       background-color: #0056b3;
     }
-
     button:disabled {
       background-color: #6c757d;
       cursor: not-allowed;
     }
-
     #agregar-producto {
       background-color: #28a745;
     }
-
     #agregar-producto:hover {
       background-color: #218838;
     }
-
-    #lista-productos {
+    #precio-producto, #monto-total, #monto-pedido-total {
+      padding: 8px;
+      background-color: #f5f5f5;
       border: 1px solid #ddd;
       border-radius: 4px;
-      padding: 15px;
-      max-height: 300px;
-      overflow-y: auto;
+      font-weight: bold;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
       background-color: #f8f9fa;
     }
-
-    .producto-item {
-      background-color: white;
+    th, td {
       border: 1px solid #dee2e6;
-      border-radius: 4px;
-      padding: 10px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding: 8px;
+      text-align: left;
     }
-
-    .producto-info {
-      flex-grow: 1;
+    th {
+      background-color: #e9ecef;
+      font-weight: bold;
     }
-
-    .producto-info strong {
-      color: #495057;
-    }
-
     .btn-eliminar {
       background-color: #dc3545;
       padding: 5px 10px;
       font-size: 12px;
-      margin-left: 10px;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
     }
-
     .btn-eliminar:hover {
       background-color: #c82333;
     }
   </style>
 </head>
 <body>
-
-      <h2>Formulario de Pedido</h2>
+  <h2>Formulario de Pedido</h2>
 
   <!-- Sección de Vendedor -->
   <div class="form-group">
