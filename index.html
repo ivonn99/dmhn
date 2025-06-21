@@ -446,27 +446,52 @@
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // Variables globales
     let vendedoresData = [];
     let clientesMostrados = [];
     let productosData = [];
     let zonasEntregaData = [];
-    let productosEnPedido = []; // Lista de productos agregados al pedido
+    let productosEnPedido = [];
 
-    // Cargar datos iniciales
-    async function cargarDatosIniciales() {
-      await Promise.all([
-        cargarVendedores(),
-        cargarZonasEntrega(),
-        cargarProductos()
-      ]);
+    // Función debounce para optimizar búsquedas
+    function debounce(fn, delay) {
+      let timeoutId;
+      return function(...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn.apply(this, args), delay);
+      };
     }
 
-    // Cargar vendedores una sola vez (local)
+    // Funciones de utilidad para mensajes
+    function mostrarMensajeExito(mensaje) {
+      const elemento = document.getElementById('mensaje-exito');
+      elemento.textContent = mensaje;
+      elemento.style.display = 'block';
+      document.getElementById('mensaje-error').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        elemento.style.display = 'none';
+      }, 5000);
+    }
+
+    function mostrarMensajeError(mensaje) {
+      const elemento = document.getElementById('mensaje-error');
+      elemento.textContent = mensaje;
+      elemento.style.display = 'block';
+      document.getElementById('mensaje-exito').style.display = 'none';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        elemento.style.display = 'none';
+      }, 5000);
+    }
+
+    // Funciones para cargar datos
     async function cargarVendedores() {
       try {
         const { data, error } = await supabase
           .from('vendedores')
-          .select('id, nombre');
+          .select('id, nombre')
+          .order('nombre', { ascending: true });
 
         if (error) {
           console.error('❌ Error al obtener vendedores:', error.message);
@@ -482,7 +507,6 @@
       }
     }
 
-    // Cargar zonas de entrega
     async function cargarZonasEntrega() {
       try {
         const { data, error } = await supabase
@@ -504,7 +528,6 @@
       }
     }
 
-    // Cargar productos
     async function cargarProductos() {
       try {
         const { data, error } = await supabase
@@ -526,7 +549,7 @@
       }
     }
 
-    // Mostrar opciones de vendedores
+    // Funciones para mostrar opciones en selects
     function mostrarOpcionesVendedores(vendedores) {
       const select = document.getElementById('vendedor');
       select.innerHTML = '<option disabled selected>Selecciona un vendedor</option>';
@@ -538,7 +561,6 @@
       });
     }
 
-    // Mostrar opciones de zonas de entrega
     function mostrarOpcionesZonasEntrega(zonas) {
       const select = document.getElementById('zona-entrega');
       select.innerHTML = '<option disabled selected>Selecciona una zona de entrega</option>';
@@ -550,7 +572,6 @@
       });
     }
 
-    // Mostrar opciones de productos
     function mostrarOpcionesProductos(productos) {
       const select = document.getElementById('producto');
       select.innerHTML = '<option disabled selected>Selecciona un producto</option>';
@@ -563,7 +584,7 @@
     }
 
     function mostrarOpcionesClientes(clientes) {
-      clientesMostrados = clientes;  // Guardamos para usar luego
+      clientesMostrados = clientes;
       const select = document.getElementById('cliente');
       select.innerHTML = '<option disabled selected>Selecciona un cliente</option>';
       clientes.forEach(cliente => {
@@ -574,205 +595,7 @@
       });
     }
 
-    // Función para mostrar mensajes de éxito
-    function mostrarMensajeExito(mensaje) {
-      const elemento = document.getElementById('mensaje-exito');
-      elemento.textContent = mensaje;
-      elemento.style.display = 'block';
-      document.getElementById('mensaje-error').style.display = 'none';
-      
-      // Scroll hacia arriba para mostrar el mensaje
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      
-      // Auto-ocultar después de 5 segundos
-      setTimeout(() => {
-        elemento.style.display = 'none';
-      }, 5000);
-    }
-
-    // Función para mostrar mensajes de error
-    function mostrarMensajeError(mensaje) {
-      const elemento = document.getElementById('mensaje-error');
-      elemento.textContent = mensaje;
-      elemento.style.display = 'block';
-      document.getElementById('mensaje-exito').style.display = 'none';
-      
-      // Scroll hacia arriba para mostrar el mensaje
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      
-      // Auto-ocultar después de 5 segundos
-      setTimeout(() => {
-        elemento.style.display = 'none';
-      }, 5000);
-    }
-
-    // Al seleccionar un producto, mostrar su precio
-    document.getElementById('producto').addEventListener('change', (e) => {
-      const productoId = parseInt(e.target.value);
-      const producto = productosData.find(p => p.id === productoId);
-      
-      if (producto) {
-        document.getElementById('precio-producto').textContent = `$${producto.precio}`;
-        calcularMontoTotal();
-      } else {
-        document.getElementById('precio-producto').textContent = '$0.00';
-        document.getElementById('monto-total').textContent = '$0.00';
-      }
-    });
-
-    // Al seleccionar un cliente, mostrar su ruta
-    document.getElementById('cliente').addEventListener('change', (e) => {
-      const clienteId = parseInt(e.target.value);
-      const cliente = clientesMostrados.find(c => c.id === clienteId);
-      document.getElementById('ruta-reparto').textContent = cliente?.ruta_reparto || '---';
-    });
-
-    // Calcular monto total cuando cambia cantidad o precio
-    function calcularMontoTotal() {
-      const productoId = parseInt(document.getElementById('producto').value);
-      const producto = productosData.find(p => p.id === productoId);
-      const cantidad = parseFloat(document.getElementById('cantidad').value) || 0;
-      const precioCustom = parseFloat(document.getElementById('precio-custom').value);
-      
-      if (producto && cantidad > 0) {
-        const precio = precioCustom || producto.precio;
-        const monto = cantidad * precio;
-        document.getElementById('monto-total').textContent = `$${monto.toFixed(2)}`;
-      } else {
-        document.getElementById('monto-total').textContent = '$0.00';
-      }
-    }
-
-    // Event listeners para recalcular monto
-    document.getElementById('cantidad').addEventListener('input', calcularMontoTotal);
-    document.getElementById('precio-custom').addEventListener('input', calcularMontoTotal);
-
-    // Función para agregar producto a la lista
-    function agregarProducto() {
-      const productoId = parseInt(document.getElementById('producto').value);
-      const cantidad = parseFloat(document.getElementById('cantidad').value);
-      const precioCustom = parseFloat(document.getElementById('precio-custom').value);
-
-      // Validaciones
-      if (!productoId) {
-        alert('Por favor selecciona un producto');
-        return;
-      }
-      if (!cantidad || cantidad <= 0) {
-        alert('Por favor ingresa una cantidad válida');
-        return;
-      }
-
-      const producto = productosData.find(p => p.id === productoId);
-      const precio = precioCustom || producto.precio;
-      const monto = cantidad * precio;
-
-      // Verificar si el producto ya está en la lista
-      const productoExistente = productosEnPedido.find(p => p.productoId === productoId && p.precio === precio);
-      
-      if (productoExistente) {
-        // Si existe, sumar la cantidad
-        productoExistente.cantidad += cantidad;
-        productoExistente.monto = productoExistente.cantidad * productoExistente.precio;
-      } else {
-        // Si no existe, agregar nuevo
-        productosEnPedido.push({
-          productoId: productoId,
-          nombre: producto.nombre,
-          categoria: producto.categoria,
-          cantidad: cantidad,
-          precio: precio,
-          monto: monto
-        });
-      }
-
-      // Actualizar la vista
-      mostrarTablaProductos();
-      calcularMontoTotalPedido();
-      limpiarCamposProducto();
-    }
-
-    // Mostrar tabla de productos
-    function mostrarTablaProductos() {
-      const tbody = document.getElementById('tbody-productos');
-      
-      if (productosEnPedido.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="sin-productos">No hay productos agregados</td></tr>';
-        return;
-      }
-
-      let html = '';
-      productosEnPedido.forEach((item, index) => {
-        html += `
-          <tr>
-            <td class="cantidad">${item.cantidad}</td>
-            <td><strong>${item.nombre}</strong><br><small>${item.categoria}</small></td>
-            <td class="precio">$${item.precio.toFixed(2)}</td>
-            <td class="monto">$${item.monto.toFixed(2)}</td>
-            <td class="acciones">
-              <button class="btn-eliminar" onclick="eliminarProducto(${index})">Eliminar</button>
-            </td>
-          </tr>
-        `;
-      });
-      
-      tbody.innerHTML = html;
-    }
-
-    // Eliminar producto de la lista
-    window.eliminarProducto = function(index) {
-      productosEnPedido.splice(index, 1);
-      mostrarTablaProductos();
-      calcularMontoTotalPedido();
-    }
-
-    // Calcular monto total del pedido
-    function calcularMontoTotalPedido() {
-      const total = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
-      document.getElementById('monto-pedido-total').textContent = `$${total.toFixed(2)}`;
-    }
-
-    // Limpiar campos de producto después de agregar
-    function limpiarCamposProducto() {
-      document.getElementById('buscador-producto').value = '';
-      document.getElementById('producto').value = '';
-      document.getElementById('cantidad').value = '';
-      document.getElementById('precio-custom').value = '';
-      document.getElementById('precio-producto').textContent = '$0.00';
-      document.getElementById('monto-total').textContent = '$0.00';
-    }
-
-    // Event listener para agregar producto
-    document.getElementById('agregar-producto').addEventListener('click', agregarProducto);
-
-    // Función debounce para optimizar búsquedas
-    function debounce(fn, delay) {
-      let timeoutId;
-      return function(...args) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => fn.apply(this, args), delay);
-      };
-    }
-
-    // Filtro local para vendedores con debounce
-    const filtroVendedoresDebounced = debounce((e) => {
-      const texto = e.target.value.toLowerCase();
-      const filtrados = vendedoresData.filter(v =>
-        v.nombre.toLowerCase().includes(texto)
-      );
-      mostrarOpcionesVendedores(filtrados);
-      
-      // Auto-seleccionar el primer resultado
-      if (filtrados.length > 0) {
-        document.getElementById('vendedor').value = filtrados[0].id;
-      } else {
-        document.getElementById('vendedor').value = '';
-      }
-    }, 300);
-
-    document.getElementById('buscador').addEventListener('input', filtroVendedoresDebounced);
-
-    // Búsqueda remota para clientes con debounce
+    // Función para buscar clientes
     async function buscarClientesRemoto(texto) {
       if (!texto) {
         mostrarOpcionesClientes([]);
@@ -796,7 +619,6 @@
 
         mostrarOpcionesClientes(data);
 
-        // Auto-seleccionar el primer resultado y mostrar su ruta
         if (data.length > 0) {
           document.getElementById('cliente').value = data[0].id;
           document.getElementById('ruta-reparto').textContent = data[0].ruta_reparto || '---';
@@ -810,38 +632,177 @@
       }
     }
 
-    const filtroClientesDebounced = debounce((e) => {
-      const texto = e.target.value.trim();
-      buscarClientesRemoto(texto);
-    }, 300);
-
-    document.getElementById('buscador-cliente').addEventListener('input', filtroClientesDebounced);
-
-    // Búsqueda de productos con debounce
-    const filtroProductosDebounced = debounce((e) => {
-      const texto = e.target.value.toLowerCase();
-      const filtrados = productosData.filter(p =>
-        p.nombre.toLowerCase().includes(texto) ||
-        p.categoria.toLowerCase().includes(texto)
-      );
-      mostrarOpcionesProductos(filtrados);
+    // Funciones para calcular montos
+    function calcularMontoTotal() {
+      const productoId = parseInt(document.getElementById('producto').value);
+      const producto = productosData.find(p => p.id === productoId);
+      const cantidad = parseFloat(document.getElementById('cantidad').value) || 0;
+      const precioCustom = parseFloat(document.getElementById('precio-custom').value);
       
-      // Auto-seleccionar el primer resultado
-      if (filtrados.length > 0) {
-        document.getElementById('producto').value = filtrados[0].id;
-        document.getElementById('precio-producto').textContent = `$${filtrados[0].precio}`;
-        calcularMontoTotal();
+      if (producto && cantidad > 0) {
+        const precio = precioCustom || producto.precio;
+        const monto = cantidad * precio;
+        document.getElementById('monto-total').textContent = `$${monto.toFixed(2)}`;
       } else {
-        document.getElementById('producto').value = '';
-        document.getElementById('precio-producto').textContent = '$0.00';
         document.getElementById('monto-total').textContent = '$0.00';
       }
-    }, 300);
+    }
 
-    document.getElementById('buscador-producto').addEventListener('input', filtroProductosDebounced);
+    function calcularMontoTotalPedido() {
+      const total = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
+      document.getElementById('monto-pedido-total').textContent = `$${total.toFixed(2)}`;
+    }
+
+    // Funciones para manejo de productos
+    function agregarProducto() {
+      const productoId = parseInt(document.getElementById('producto').value);
+      const cantidad = parseFloat(document.getElementById('cantidad').value);
+      const precioCustom = parseFloat(document.getElementById('precio-custom').value);
+
+      if (!productoId) {
+        alert('Por favor selecciona un producto');
+        return;
+      }
+      if (!cantidad || cantidad <= 0) {
+        alert('Por favor ingresa una cantidad válida');
+        return;
+      }
+
+      const producto = productosData.find(p => p.id === productoId);
+      const precio = precioCustom || producto.precio;
+      const monto = cantidad * precio;
+
+      const productoExistente = productosEnPedido.find(p => p.productoId === productoId && p.precio === precio);
+      
+      if (productoExistente) {
+        productoExistente.cantidad += cantidad;
+        productoExistente.monto = productoExistente.cantidad * productoExistente.precio;
+      } else {
+        productosEnPedido.push({
+          productoId: productoId,
+          nombre: producto.nombre,
+          categoria: producto.categoria,
+          cantidad: cantidad,
+          precio: precio,
+          monto: monto
+        });
+      }
+
+      mostrarTablaProductos();
+      calcularMontoTotalPedido();
+      limpiarCamposProducto();
+    }
+
+    function mostrarTablaProductos() {
+      const tbody = document.getElementById('tbody-productos');
+      
+      if (productosEnPedido.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="sin-productos">No hay productos agregados</td></tr>';
+        return;
+      }
+
+      let html = '';
+      productosEnPedido.forEach((item, index) => {
+        html += `
+          <tr>
+            <td class="cantidad">${item.cantidad}</td>
+            <td><strong>${item.nombre}</strong><br><small>${item.categoria}</small></td>
+            <td class="precio">$${item.precio.toFixed(2)}</td>
+            <td class="monto">$${item.monto.toFixed(2)}</td>
+            <td class="acciones">
+              <button class="btn-eliminar" onclick="app.eliminarProducto(${index})">Eliminar</button>
+            </td>
+          </tr>
+        `;
+      });
+      
+      tbody.innerHTML = html;
+    }
+
+    function limpiarCamposProducto() {
+      document.getElementById('buscador-producto').value = '';
+      document.getElementById('producto').value = '';
+      document.getElementById('cantidad').value = '';
+      document.getElementById('precio-custom').value = '';
+      document.getElementById('precio-producto').textContent = '$0.00';
+      document.getElementById('monto-total').textContent = '$0.00';
+    }
 
     // Función para previsualizar pedido
     function previsualizarPedido() {
+      const vendedorId = parseInt(document.getElementById('vendedor').value);
+      const clienteId = parseInt(document.getElementById('cliente').value);
+      const zonaEntregaId = parseInt(document.getElementById('zona-entrega').value);
+
+      if (!vendedorId || !clienteId || !zonaEntregaId) {
+        alert('Por favor completa todos los campos obligatorios (Vendedor, Cliente, Zona de Entrega)');
+        return;
+      }
+
+      if (productosEnPedido.length === 0) {
+        alert('Por favor agrega al menos un producto al pedido');
+        return;
+      }
+
+      const vendedor = vendedoresData.find(v => v.id === vendedorId);
+      const cliente = clientesMostrados.find(c => c.id === clienteId);
+      const zonaEntrega = zonasEntregaData.find(z => z.id === zonaEntregaId);
+      const otroDestino = document.getElementById('otro-destino').value.trim();
+      const oferta = document.getElementById('oferta').value.trim();
+      const comentarios = document.getElementById('comentarios').value.trim();
+
+      const total = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
+
+      let html = `
+        <div class="resumen-section">
+          <h3>Información General</h3>
+          <div class="resumen-field"><strong>Vendedor:</strong> ${vendedor.nombre}</div>
+          <div class="resumen-field"><strong>Cliente:</strong> ${cliente.nombre}</div>
+          <div class="resumen-field"><strong>Ruta:</strong> ${cliente.ruta_reparto || '---'}</div>
+          <div class="resumen-field"><strong>Zona de Entrega:</strong> ${zonaEntrega.nombre}</div>
+          ${otroDestino ? `<div class="resumen-field"><strong>Otro Destino:</strong> ${otroDestino}</div>` : ''}
+          ${oferta ? `<div class="resumen-field"><strong>Oferta:</strong> ${oferta}</div>` : ''}
+          ${comentarios ? `<div class="resumen-field"><strong>Comentarios:</strong> ${comentarios}</div>` : ''}
+        </div>
+
+        <div class="resumen-section">
+          <h3>Productos</h3>
+          <table class="tabla-productos" style="margin: 0;">
+            <thead>
+              <tr>
+                <th class="cantidad">Cantidad</th>
+                <th>Producto</th>
+                <th class="precio">Precio</th>
+                <th class="monto">Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      productosEnPedido.forEach(item => {
+        html += `
+          <tr>
+            <td class="cantidad">${item.cantidad}</td>
+            <td><strong>${item.nombre}</strong><br><small>${item.categoria}</small></td>
+            <td class="precio">$${item.precio.toFixed(2)}</td>
+            <td class="monto">$${item.monto.toFixed(2)}</td>
+          </tr>
+        `;
+      });
+
+      html += `
+            </tbody>
+          </table>
+        </div>
+        <div class="total-final">TOTAL: $${total.toFixed(2)}</div>
+      `;
+
+      document.getElementById('contenido-preview').innerHTML = html;
+      document.getElementById('modal-preview').style.display = 'block';
+    }
+
+    // Función para enviar pedido
+    async function enviarPedido() {
       const vendedorId = parseInt(document.getElementById('vendedor').value);
       const clienteId = parseInt(document.getElementById('cliente').value);
       const zonaEntregaId = parseInt(document.getElementById('zona-entrega').value);
@@ -849,6 +810,30 @@
       const oferta = document.getElementById('oferta').value.trim();
       const comentarios = document.getElementById('comentarios').value.trim();
 
-      // Validaciones
-      if (!vendedorId || !clienteId || !zonaEntregaId) {
-        alert('Por favor completa todos los campos obligatorios (
+      try {
+        // Crear múltiples registros en la tabla pedidos (uno por producto)
+        const pedidosParaInsertar = productosEnPedido.map(item => ({
+          cliente_id: clienteId,
+          vendedor_id: vendedorId,
+          producto_id: item.productoId,
+          zona_entrega_id: zonaEntregaId,
+          cantidad: item.cantidad,
+          precio: item.precio,
+          monto: item.monto,
+          fecha: new Date().toISOString(),
+          otro_destino: otroDestino || null,
+          oferta: oferta || null,
+          comentarios: comentarios || null
+        }));
+
+        const { data, error } = await supabase
+          .from('pedidos')
+          .insert(pedidosParaInsertar);
+
+        if (error) {
+          console.error('❌ Error al enviar pedido:', error.message);
+          mostrarMensajeError('Error al enviar el pedido: ' + error.message);
+          return;
+        }
+
+        // Limpiar formulario
