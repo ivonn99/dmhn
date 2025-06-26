@@ -848,7 +848,12 @@ function agregarProducto() {
 function mostrarResumenPedido() {
   // Validar que haya productos
   if (productosEnPedido.length === 0) {
-    alert('No hay productos en el pedido para mostrar resumen');
+    Swal.fire({
+      icon: 'warning',
+      title: 'Sin productos',
+      text: 'No hay productos en el pedido para mostrar resumen',
+      confirmButtonText: 'Aceptar'
+    });
     return;
   }
 
@@ -896,6 +901,7 @@ function mostrarResumenPedido() {
   // Mostrar modal
   document.getElementById('modal-resumen').style.display = 'block';
 }
+
 
 // Event listeners para el modal
 document.getElementById('resumen-pedido').addEventListener('click', mostrarResumenPedido);
