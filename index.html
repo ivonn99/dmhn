@@ -748,7 +748,6 @@ function agregarProducto() {
     document.getElementById('buscador-producto').addEventListener('input', filtroProductosDebounced);
 
     async function guardarPedido() {
-  // Obtener valores texto y numéricos directamente del formulario y objetos
   const vendedor = document.getElementById('vendedor');
   const cliente = document.getElementById('cliente');
   const zonaEntrega = document.getElementById('zona-entrega');
@@ -757,7 +756,6 @@ function agregarProducto() {
   const oferta = document.getElementById('oferta').value.trim();
   const comentarios = document.getElementById('comentarios').value.trim();
 
-  // Sacar texto seleccionado (no ID) de los select
   const vendedorTexto = vendedor.options[vendedor.selectedIndex]?.text || null;
   const clienteTexto = cliente.options[cliente.selectedIndex]?.text || null;
   const zonaEntregaTexto = zonaEntrega.options[zonaEntrega.selectedIndex]?.text || null;
@@ -787,11 +785,13 @@ function agregarProducto() {
 
   try {
     const fechaActual = new Date().toISOString();
+    const pedidoId = Date.now(); // ID único como bigint
 
     const insertData = productosEnPedido.map(item => ({
+      pedido_id: pedidoId,
       cliente: clienteTexto,
       vendedor: vendedorTexto,
-      producto: item.nombre,       // campo texto producto
+      producto: item.nombre,
       zona_entrega: zonaEntregaTexto,
       cantidad: item.cantidad,
       precio: item.precio,
@@ -823,8 +823,8 @@ function agregarProducto() {
     Swal.fire({
       icon: 'success',
       title: '¡Pedido guardado!',
-      html: `${totalProductos} productos por un total de <strong>$${montoTotal.toFixed(2)}</strong>`,
-      timer: 2000,
+      html: `Folio #<strong>${pedidoId}</strong> con ${totalProductos} productos por un total de <strong>$${montoTotal.toFixed(2)}</strong>`,
+      timer: 3000,
       showConfirmButton: false
     });
 
@@ -843,6 +843,7 @@ function agregarProducto() {
     btnGuardar.textContent = 'Guardar Pedido';
   }
 }
+
 
     // Función para mostrar el modal de resumen
 function mostrarResumenPedido() {
