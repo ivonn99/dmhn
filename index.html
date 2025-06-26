@@ -786,62 +786,63 @@ function agregarProducto() {
   btnGuardar.textContent = 'Guardando...';
 
   try {
-    const fechaActual = new Date().toISOString();
+  const fechaActual = new Date().toISOString();
+  const pedidoId = Date.now(); // Genera el ID único del pedido
 
-    const insertData = productosEnPedido.map(item => ({
-      cliente: clienteTexto,
-      vendedor: vendedorTexto,
-      producto: item.nombre,       // campo texto producto
-      zona_entrega: zonaEntregaTexto,
-      cantidad: item.cantidad,
-      precio: item.precio,
-      monto: item.monto,
-      fecha: fechaActual,
-      ruta_reparto: rutaReparto !== '---' ? rutaReparto : null,
-      otro_destino: otroDestino || null,
-      oferta: oferta || null,
-      comentarios: comentarios || null
-    }));
+  const insertData = productosEnPedido.map(item => ({
+    pedido_id: pedidoId, // << nuevo campo
+    cliente: clienteTexto,
+    vendedor: vendedorTexto,
+    producto: item.nombre,
+    zona_entrega: zonaEntregaTexto,
+    cantidad: item.cantidad,
+    precio: item.precio,
+    monto: item.monto,
+    fecha: fechaActual,
+    ruta_reparto: rutaReparto !== '---' ? rutaReparto : null,
+    otro_destino: otroDestino || null,
+    oferta: oferta || null,
+    comentarios: comentarios || null
+  }));
 
-    const { data, error } = await supabase
-      .from('pedidos')
-      .insert(insertData);
+  const { data, error } = await supabase
+    .from('pedidos')
+    .insert(insertData);
 
-    if (error) {
-      console.error('❌ Error al guardar pedido:', error.message);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al guardar',
-        text: error.message
-      });
-      return;
-    }
-
-    const totalProductos = productosEnPedido.length;
-    const montoTotal = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
-
-    Swal.fire({
-      icon: 'success',
-      title: '¡Pedido guardado!',
-      html: `${totalProductos} productos por un total de <strong>$${montoTotal.toFixed(2)}</strong>`,
-      timer: 2000,
-      showConfirmButton: false
-    });
-
-    limpiarFormularioCompleto();
-    document.getElementById('modal-resumen').style.display = 'none';
-
-  } catch (err) {
-    console.error('❌ Error de conexión:', err);
+  if (error) {
+    console.error('❌ Error al guardar pedido:', error.message);
     Swal.fire({
       icon: 'error',
-      title: 'Error de conexión',
-      text: 'No se pudo guardar el pedido. Intenta de nuevo más tarde.'
+      title: 'Error al guardar',
+      text: error.message
     });
-  } finally {
-    btnGuardar.disabled = false;
-    btnGuardar.textContent = 'Guardar Pedido';
+    return;
   }
+
+  const totalProductos = productosEnPedido.length;
+  const montoTotal = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
+
+  Swal.fire({
+    icon: 'success',
+    title: '¡Pedido guardado!',
+    html: `Folio #<strong>${pedidoId}</strong> con ${totalProductos} productos por un total de <strong>$${montoTotal.toFixed(2)}</strong>`,
+    timer: 3000,
+    showConfirmButton: false
+  });
+
+  limpiarFormularioCompleto();
+  document.getElementById('modal-resumen').style.display = 'none';
+
+} catch (err) {
+  console.error('❌ Error de conexión:', err);
+  Swal.fire({
+    icon: 'error',
+    title: 'Error de conexión',
+    text: 'No se pudo guardar el pedido. Intenta de nuevo más tarde.'
+  });
+} finally {
+  btnGuardar.disabled = false;
+  btnGuardar.textContent = 'Guardar Pedido';
 }
 
     // Función para mostrar el modal de resumen
