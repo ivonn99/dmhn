@@ -530,66 +530,77 @@
     });
 
     // Calcular monto total cuando cambia cantidad o precio
-    function calcularMontoTotal() {
-      const productoId = parseInt(document.getElementById('producto').value);
-      const producto = productosData.find(p => p.id === productoId);
-      const cantidad = parseFloat(document.getElementById('cantidad').value) || 0;
-      
-      if (producto && cantidad > 0) {
-        const precio = producto.precio;
-        const monto = cantidad * precio;
-        document.getElementById('monto-total').textContent = `${monto.toFixed(2)}`;
-      } else {
-        document.getElementById('monto-total').textContent = '$0.00';
-      }
-    }
+function calcularMontoTotal() {
+  const productoId = parseInt(document.getElementById('producto').value);
+  const producto = productosData.find(p => p.id === productoId);
+  const cantidad = parseFloat(document.getElementById('cantidad').value) || 0;
 
-    // Event listeners para recalcular monto
-    document.getElementById('cantidad').addEventListener('input', calcularMontoTotal);
+  if (producto && cantidad > 0) {
+    const precio = producto.precio;
+    const monto = cantidad * precio;
+    document.getElementById('monto-total').textContent = `${monto.toFixed(2)}`;
+  } else {
+    document.getElementById('monto-total').textContent = '$0.00';
+  }
+}
 
-    // Función para agregar producto a la lista
-    function agregarProducto() {
-      const productoId = parseInt(document.getElementById('producto').value);
-      const cantidad = parseFloat(document.getElementById('cantidad').value);
+// Event listener para recalcular monto
+document.getElementById('cantidad').addEventListener('input', calcularMontoTotal);
 
-      // Validaciones
-      if (!productoId) {
-        alert('Por favor selecciona un producto');
-        return;
-      }
-      if (!cantidad || cantidad <= 0) {
-        alert('Por favor ingresa una cantidad válida');
-        return;
-      }
+// Función para agregar producto a la lista
+function agregarProducto() {
+  const productoId = parseInt(document.getElementById('producto').value);
+  const cantidad = parseFloat(document.getElementById('cantidad').value);
 
-      const producto = productosData.find(p => p.id === productoId);
-      const precio = producto.precio;
-      const monto = cantidad * precio;
+  // Validaciones con SweetAlert2
+  if (!productoId) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Producto no seleccionado',
+      text: 'Por favor selecciona un producto.',
+      confirmButtonText: 'Entendido'
+    });
+    return;
+  }
 
-      // Verificar si el producto ya está en la lista
-      const productoExistente = productosEnPedido.find(p => p.productoId === productoId);
-      
-      if (productoExistente) {
-        // Si existe, sumar la cantidad
-        productoExistente.cantidad += cantidad;
-        productoExistente.monto = productoExistente.cantidad * productoExistente.precio;
-      } else {
-        // Si no existe, agregar nuevo
-        productosEnPedido.push({
-          productoId: productoId,
-          nombre: producto.nombre,
-          categoria: producto.categoria,
-          cantidad: cantidad,
-          precio: precio,
-          monto: monto
-        });
-      }
+  if (!cantidad || cantidad <= 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Cantidad inválida',
+      text: 'Por favor ingresa una cantidad válida.',
+      confirmButtonText: 'Ok'
+    });
+    return;
+  }
 
-      // Actualizar la vista
-      mostrarListaProductos();
-      calcularMontoTotalPedido();
-      limpiarCamposProducto();
-    }
+  const producto = productosData.find(p => p.id === productoId);
+  const precio = producto.precio;
+  const monto = cantidad * precio;
+
+  // Verificar si el producto ya está en la lista
+  const productoExistente = productosEnPedido.find(p => p.productoId === productoId);
+
+  if (productoExistente) {
+    // Si existe, sumar la cantidad
+    productoExistente.cantidad += cantidad;
+    productoExistente.monto = productoExistente.cantidad * productoExistente.precio;
+  } else {
+    // Si no existe, agregar nuevo
+    productosEnPedido.push({
+      productoId: productoId,
+      nombre: producto.nombre,
+      categoria: producto.categoria,
+      cantidad: cantidad,
+      precio: precio,
+      monto: monto
+    });
+  }
+
+  // Actualizar la vista
+  mostrarListaProductos();
+  calcularMontoTotalPedido();
+  limpiarCamposProducto();
+}
 
     // Mostrar lista de productos
      function mostrarListaProductos() {
