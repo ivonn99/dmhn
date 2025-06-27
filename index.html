@@ -759,7 +759,6 @@ function agregarProducto() {
   const rutaReparto = document.getElementById('ruta-reparto').textContent;
   const otroDestino = document.getElementById('otro-destino').value.trim();
   const oferta = document.getElementById('oferta').value.trim();
-  const enlaces = document.getElementById('enlaces').value.trim();  // <-- Nuevo
   const comentarios = document.getElementById('comentarios').value.trim();
 
   const vendedorTexto = vendedor.options[vendedor.selectedIndex]?.text || null;
@@ -797,7 +796,6 @@ function agregarProducto() {
       ruta_reparto: rutaReparto !== '---' ? rutaReparto : null,
       otro_destino: otroDestino || null,
       oferta: oferta || null,
-      enlaces: enlaces || null,  // <-- Nuevo campo agregado aquí
       comentarios: comentarios || null
     }));
 
@@ -843,7 +841,6 @@ function agregarProducto() {
     btnGuardar.textContent = 'Guardar Pedido';
   }
 }
-
 function mostrarResumenPedido() {
   const vendedorSelect = document.getElementById('vendedor');
   const clienteSelect = document.getElementById('cliente');
@@ -961,13 +958,9 @@ document.getElementById('resumen-otro-destino').textContent = destinoTexto;
 
   // Llenar información adicional
   document.getElementById('resumen-oferta').textContent = 
-  document.getElementById('oferta').value.trim() || '---';
-
-document.getElementById('resumen-enlaces').textContent =
-  document.getElementById('enlaces').value.trim() || '---';
-
-document.getElementById('resumen-comentarios').textContent = 
-  document.getElementById('comentarios').value.trim() || '---';
+    document.getElementById('oferta').value || '---';
+  document.getElementById('resumen-comentarios').textContent = 
+    document.getElementById('comentarios').value || '---';
 
   // Mostrar modal
   document.getElementById('modal-resumen').style.display = 'block';
