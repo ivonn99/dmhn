@@ -841,6 +841,7 @@ function agregarProducto() {
 function mostrarResumenPedido() {
   const vendedorSelect = document.getElementById('vendedor');
   const clienteSelect = document.getElementById('cliente');
+  const destinoSelect = document.getElementById('destino');
   const zonaSelect = document.getElementById('zona-entrega');
 
   // Validar vendedor
@@ -873,16 +874,16 @@ function mostrarResumenPedido() {
     return;
   }
 
-  // Validar zona de entrega
+  // ✅ Validar destino
   if (
-    zonaSelect.selectedIndex === 0 || 
-    !zonaSelect.value.trim() || 
-    zonaSelect.options[zonaSelect.selectedIndex].text.toLowerCase().includes('seleccionar')
+    destinoSelect.selectedIndex === 0 || 
+    !destinoSelect.value.trim() || 
+    destinoSelect.options[destinoSelect.selectedIndex].text.toLowerCase().includes('seleccionar')
   ) {
     Swal.fire({
       icon: 'warning',
-      title: 'Campo zona de entrega incompleto',
-      text: 'Por favor selecciona una zona de entrega válida.',
+      title: 'Campo destino incompleto',
+      text: 'Por favor selecciona un destino válido.',
       confirmButtonText: 'Entendido'
     });
     return;
@@ -904,6 +905,8 @@ function mostrarResumenPedido() {
     vendedorSelect.options[vendedorSelect.selectedIndex]?.text || '---';
   document.getElementById('resumen-cliente').textContent = 
     clienteSelect.options[clienteSelect.selectedIndex]?.text || '---';
+  document.getElementById('resumen-destino').textContent = 
+    destinoSelect.options[destinoSelect.selectedIndex]?.text || '---'; // 👈 Muestra destino
   document.getElementById('resumen-ruta').textContent = 
     document.getElementById('ruta-reparto').textContent || '---';
   document.getElementById('resumen-zona').textContent = 
@@ -939,7 +942,6 @@ function mostrarResumenPedido() {
   // Mostrar modal
   document.getElementById('modal-resumen').style.display = 'block';
 }
-
 
 // Event listeners para el modal
 document.getElementById('resumen-pedido').addEventListener('click', mostrarResumenPedido);
