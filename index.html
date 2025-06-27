@@ -328,56 +328,62 @@
   <textarea id="comentarios" rows="3" placeholder="Comentarios adicionales"></textarea>
 </div>
 
-  <!-- Modal para resumen del pedido -->
-  <div id="modal-resumen" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Resumen del Pedido</h2>
-        <span class="close">&times;</span>
+  <!-- Botón para mostrar el resumen del pedido (DEBE IR AFUERA DEL MODAL) -->
+<div class="form-group">
+  <button id="resumen-pedido" type="button">Mostrar Resumen</button>
+</div>
+
+<!-- Modal para resumen del pedido -->
+<div id="modal-resumen" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Resumen del Pedido</h2>
+      <span class="close">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div class="resumen-seccion">
+        <h3>Información General</h3>
+        <p><strong>Vendedor:</strong> <span id="resumen-vendedor">---</span></p>
+        <p><strong>Cliente:</strong> <span id="resumen-cliente">---</span></p>
+        <p><strong>Ruta de Reparto:</strong> <span id="resumen-ruta">---</span></p>
+        <p><strong>Zona de Entrega:</strong> <span id="resumen-zona">---</span></p>
+        <p><strong>Otro Destino:</strong> <span id="resumen-otro-destino">---</span></p>
       </div>
-      <div class="modal-body">
-        <div class="resumen-seccion">
-          <h3>Información General</h3>
-          <p><strong>Vendedor:</strong> <span id="resumen-vendedor">---</span></p>
-          <p><strong>Cliente:</strong> <span id="resumen-cliente">---</span></p>
-          <p><strong>Ruta de Reparto:</strong> <span id="resumen-ruta">---</span></p>
-          <p><strong>Zona de Entrega:</strong> <span id="resumen-zona">---</span></p>
-          <p><strong>Otro Destino:</strong> <span id="resumen-otro-destino">---</span></p>
-        </div>
-        
-        <div class="resumen-seccion">
-          <h3>Productos</h3>
-          <table id="resumen-productos">
-            <thead>
-              <tr>
-                <th>Cantidad</th>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Monto</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td colspan="4">No hay productos</td></tr>
-            </tbody>
-          </table>
-          <div class="resumen-total">
-            <strong>Total del Pedido: <span id="resumen-total">$0.00</span></strong>
-          </div>
-        </div>
-        
-        <div class="resumen-seccion">
-          <h3>Información Adicional</h3>
-          <p><strong>Oferta:</strong> <span id="resumen-oferta">---</span></p>
-          <p><strong>Enlaces:</strong> <span id="resumen-enlaces">---</span></p>  <!-- <-- NUEVO -->
-          <p><strong>Comentarios:</strong> <span id="resumen-comentarios">---</span></p>
+
+      <div class="resumen-seccion">
+        <h3>Productos</h3>
+        <table id="resumen-productos">
+          <thead>
+            <tr>
+              <th>Cantidad</th>
+              <th>Producto</th>
+              <th>Precio</th>
+              <th>Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="4">No hay productos</td></tr>
+          </tbody>
+        </table>
+        <div class="resumen-total">
+          <strong>Total del Pedido: <span id="resumen-total">$0.00</span></strong>
         </div>
       </div>
-      <div class="modal-footer">
-        <button id="guardar-pedido" type="button">Guardar Pedido</button>
-        <button id="cerrar-modal" type="button">Cerrar</button>
+
+      <div class="resumen-seccion">
+        <h3>Información Adicional</h3>
+        <p><strong>Oferta:</strong> <span id="resumen-oferta">---</span></p>
+        <p><strong>Enlaces:</strong> <span id="resumen-enlaces">---</span></p>
+        <p><strong>Comentarios:</strong> <span id="resumen-comentarios">---</span></p>
       </div>
     </div>
+    <div class="modal-footer">
+      <button id="guardar-pedido" type="button">Guardar Pedido</button>
+      <button id="cerrar-modal" type="button">Cerrar</button>
+    </div>
   </div>
+</div>
+
   
   <script type="module">
     const SUPABASE_URL = 'https://gedrcazwwzarxjxbtgnd.supabase.co';
