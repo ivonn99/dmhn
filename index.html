@@ -875,10 +875,10 @@ function mostrarResumenPedido() {
   }
 
   // Validar destino
+// Validar destino
 if (
-  destinoSelect.selectedIndex === 0 || 
   !destinoSelect.value.trim() || 
-  destinoSelect.options[destinoSelect.selectedIndex].text.toLowerCase().includes('seleccionar')
+  destinoSelect.value.toLowerCase() === 'seleccionar' // Solo si usas opción seleccionar
 ) {
   Swal.fire({
     icon: 'warning',
@@ -887,6 +887,20 @@ if (
     confirmButtonText: 'Entendido'
   });
   return;
+}
+
+// Validar que si seleccionó "Otro", el input esté lleno
+if (destinoSelect.value === 'Otro') {
+  const otroDestinoInput = document.getElementById('otro-destino').value.trim();
+  if (!otroDestinoInput) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Otro destino incompleto',
+      text: 'Por favor escribe el otro destino.',
+      confirmButtonText: 'Entendido'
+    });
+    return;
+  }
 }
 
 // Validar que haya productos
@@ -905,7 +919,7 @@ document.getElementById('resumen-vendedor').textContent =
   vendedorSelect.options[vendedorSelect.selectedIndex]?.text || '---';
 document.getElementById('resumen-cliente').textContent = 
   clienteSelect.options[clienteSelect.selectedIndex]?.text || '---';
-// ❌ NO uses 'resumen-destino'
+// 
 
 document.getElementById('resumen-ruta').textContent = 
   document.getElementById('ruta-reparto').textContent || '---';
