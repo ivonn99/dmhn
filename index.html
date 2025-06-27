@@ -756,18 +756,12 @@ function agregarProducto() {
   const oferta = document.getElementById('oferta').value.trim();
   const comentarios = document.getElementById('comentarios').value.trim();
 
-  // Obtener los valores seleccionados (para validar)
-  const vendedorValue = vendedor.value;
-  const clienteValue = cliente.value;
-  const zonaEntregaValue = zonaEntrega.value;
-
-  // Obtener los textos visibles (para guardar)
   const vendedorTexto = vendedor.options[vendedor.selectedIndex]?.text || null;
   const clienteTexto = cliente.options[cliente.selectedIndex]?.text || null;
   const zonaEntregaTexto = zonaEntrega.options[zonaEntrega.selectedIndex]?.text || null;
 
-  // Validaciones más estrictas
-  if (!vendedorValue || !clienteValue || (!zonaEntregaValue && !otroDestino)) {
+  // Validaciones
+  if (!vendedorTexto || !clienteTexto || (!zonaEntregaTexto && !otroDestino)) {
     Swal.fire({
       icon: 'warning',
       title: 'Campos incompletos',
