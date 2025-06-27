@@ -197,17 +197,19 @@
 <body>
   <h2>Formulario de Pedido</h2>
 
-  <!-- Sección de Vendedor -->
-  <div class="form-group">
-    <label for="buscador">Buscar Vendedor:</label>
-    <input type="text" id="buscador" placeholder="Buscar vendedor..." />
-  </div>
-  <div class="form-group">
-    <label for="vendedor">Vendedor:</label>
-    <select id="vendedor">
-      <option disabled selected>Selecciona un vendedor</option>
-    </select>
-  </div>
+<!-- Sección de Vendedor -->
+<div class="form-group">
+  <label for="buscador">Buscar Vendedor:</label>
+  <input type="text" id="buscador" placeholder="Buscar vendedor..." />
+</div>
+
+<div class="form-group">
+  <label for="vendedor">Vendedor:</label>
+  <select id="vendedor">
+    <option value="" disabled selected>Selecciona un vendedor</option>
+  </select>
+</div>
+
 
   <!-- Sección de Cliente -->
   <div class="form-group">
@@ -756,12 +758,18 @@ function agregarProducto() {
   const oferta = document.getElementById('oferta').value.trim();
   const comentarios = document.getElementById('comentarios').value.trim();
 
+  // Cambié esto:
+  const vendedorValue = vendedor.value;
+  const clienteValue = cliente.value;
+  const zonaEntregaValue = zonaEntrega.value;
+
+  // Para mostrar (texto visible)
   const vendedorTexto = vendedor.options[vendedor.selectedIndex]?.text || null;
   const clienteTexto = cliente.options[cliente.selectedIndex]?.text || null;
   const zonaEntregaTexto = zonaEntrega.options[zonaEntrega.selectedIndex]?.text || null;
 
-  // Validaciones
-  if (!vendedorTexto || !clienteTexto || (!zonaEntregaTexto && !otroDestino)) {
+  // Validaciones usando value para detectar opción placeholder vacía
+  if (!vendedorValue || !clienteValue || (!zonaEntregaValue && !otroDestino)) {
     Swal.fire({
       icon: 'warning',
       title: 'Campos incompletos',
@@ -814,6 +822,8 @@ function agregarProducto() {
         title: 'Error al guardar',
         text: error.message
       });
+      btnGuardar.disabled = false;
+      btnGuardar.textContent = 'Guardar pedido';
       return;
     }
 
@@ -856,52 +866,20 @@ function mostrarResumenPedido() {
     return;
   }
 
-  // Obtener selects
+  // Llenar información general
   const vendedorSelect = document.getElementById('vendedor');
   const clienteSelect = document.getElementById('cliente');
   const zonaSelect = document.getElementById('zona-entrega');
-
-  // Validar que hayan seleccionado vendedor, cliente y zona
-  if (vendedorSelect.selectedIndex === 0 || vendedorSelect.value === "") {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Vendedor no seleccionado',
-      text: 'Por favor selecciona un vendedor.',
-      confirmButtonText: 'Entendido'
-    });
-    return;
-  }
-
-  if (clienteSelect.selectedIndex === 0 || clienteSelect.value === "") {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Cliente no seleccionado',
-      text: 'Por favor selecciona un cliente.',
-      confirmButtonText: 'Entendido'
-    });
-    return;
-  }
-
-  if (zonaSelect.selectedIndex === 0 || zonaSelect.value === "") {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Zona de entrega no seleccionada',
-      text: 'Por favor selecciona una zona de entrega.',
-      confirmButtonText: 'Entendido'
-    });
-    return;
-  }
-
-  // Llenar información general en el resumen
-  document.getElementById('resumen-vendedor').textContent =
+  
+  document.getElementById('resumen-vendedor').textContent = 
     vendedorSelect.options[vendedorSelect.selectedIndex]?.text || '---';
-  document.getElementById('resumen-cliente').textContent =
+  document.getElementById('resumen-cliente').textContent = 
     clienteSelect.options[clienteSelect.selectedIndex]?.text || '---';
-  document.getElementById('resumen-ruta').textContent =
+  document.getElementById('resumen-ruta').textContent = 
     document.getElementById('ruta-reparto').textContent;
-  document.getElementById('resumen-zona').textContent =
+  document.getElementById('resumen-zona').textContent = 
     zonaSelect.options[zonaSelect.selectedIndex]?.text || '---';
-  document.getElementById('resumen-otro-destino').textContent =
+  document.getElementById('resumen-otro-destino').textContent = 
     document.getElementById('otro-destino').value || '---';
 
   // Llenar productos
@@ -924,14 +902,34 @@ function mostrarResumenPedido() {
   document.getElementById('resumen-total').textContent = `$${total.toFixed(2)}`;
 
   // Llenar información adicional
-  document.getElementById('resumen-oferta').textContent =
+  document.getElementById('resumen-oferta').textContent = 
     document.getElementById('oferta').value || '---';
-  document.getElementById('resumen-comentarios').textContent =
+  document.getElementById('resumen-comentarios').textContent = 
     document.getElementById('comentarios').value || '---';
 
   // Mostrar modal
   document.getElementById('modal-resumen').style.display = 'block';
 }
+
+
+// Event listeners para el modal
+document.getElementById('resumen-pedido').addEventListener('click', mostrarResumenPedido);
+
+document.getElementById('cerrar-modal').addEventListener('click', () => {
+  document.getElementById('modal-resumen').style.display = 'none';
+});
+
+document.querySelector('.close').addEventListener('click', () => {
+  document.getElementById('modal-resumen').style.display = 'none';
+});
+
+// Cerrar modal al hacer clic fuera de él
+window.addEventListener('click', (e) => {
+  const modal = document.getElementById('modal-resumen');
+  if (e.target === modal) {
+    modal.style.display = 'none';
+  }
+});
 
         // Función para limpiar formulario completo (modificada)
     function limpiarFormularioCompleto() {
