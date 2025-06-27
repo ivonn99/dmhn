@@ -749,7 +749,7 @@ function agregarProducto() {
 
     document.getElementById('buscador-producto').addEventListener('input', filtroProductosDebounced);
 
-    async function guardarPedido() {
+   async function guardarPedido() {
   const vendedor = document.getElementById('vendedor');
   const cliente = document.getElementById('cliente');
   const zonaEntrega = document.getElementById('zona-entrega');
@@ -758,26 +758,12 @@ function agregarProducto() {
   const oferta = document.getElementById('oferta').value.trim();
   const comentarios = document.getElementById('comentarios').value.trim();
 
-  // Cambié esto:
-  const vendedorValue = vendedor.value;
-  const clienteValue = cliente.value;
-  const zonaEntregaValue = zonaEntrega.value;
-
-  // Para mostrar (texto visible)
+  // Obtener valores visibles (texto)
   const vendedorTexto = vendedor.options[vendedor.selectedIndex]?.text || null;
   const clienteTexto = cliente.options[cliente.selectedIndex]?.text || null;
   const zonaEntregaTexto = zonaEntrega.options[zonaEntrega.selectedIndex]?.text || null;
 
-  // Validaciones usando value para detectar opción placeholder vacía
-  if (!vendedorValue || !clienteValue || (!zonaEntregaValue && !otroDestino)) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Campos incompletos',
-      text: 'Por favor completa Vendedor, Cliente y al menos Zona de Entrega u Otro Destino'
-    });
-    return;
-  }
-
+  // Validación SOLO para productos
   if (productosEnPedido.length === 0) {
     Swal.fire({
       icon: 'warning',
@@ -791,6 +777,7 @@ function agregarProducto() {
   btnGuardar.disabled = true;
   btnGuardar.textContent = 'Guardando...';
 
+}
   try {
     const fechaActual = new Date().toISOString();
     const pedidoId = Date.now(); // ID único como bigint
