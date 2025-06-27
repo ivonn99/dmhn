@@ -838,15 +838,17 @@ function agregarProducto() {
     btnGuardar.textContent = 'Guardar Pedido';
   }
 }
-
 function mostrarResumenPedido() {
   const vendedorSelect = document.getElementById('vendedor');
   const clienteSelect = document.getElementById('cliente');
   const zonaSelect = document.getElementById('zona-entrega');
 
   // Validar vendedor
-  const vendedorValue = vendedorSelect.value.trim();
-  if (!vendedorValue || vendedorValue.toLowerCase().includes('seleccionar')) {
+  if (
+    vendedorSelect.selectedIndex === 0 || 
+    !vendedorSelect.value.trim() || 
+    vendedorSelect.options[vendedorSelect.selectedIndex].text.toLowerCase().includes('seleccionar')
+  ) {
     Swal.fire({
       icon: 'warning',
       title: 'Campo vendedor incompleto',
@@ -857,8 +859,11 @@ function mostrarResumenPedido() {
   }
 
   // Validar cliente
-  const clienteValue = clienteSelect.value.trim();
-  if (!clienteValue || clienteValue.toLowerCase().includes('seleccionar')) {
+  if (
+    clienteSelect.selectedIndex === 0 || 
+    !clienteSelect.value.trim() || 
+    clienteSelect.options[clienteSelect.selectedIndex].text.toLowerCase().includes('seleccionar')
+  ) {
     Swal.fire({
       icon: 'warning',
       title: 'Campo cliente incompleto',
@@ -869,8 +874,11 @@ function mostrarResumenPedido() {
   }
 
   // Validar zona de entrega
-  const zonaValue = zonaSelect.value.trim();
-  if (!zonaValue || zonaValue.toLowerCase().includes('seleccionar')) {
+  if (
+    zonaSelect.selectedIndex === 0 || 
+    !zonaSelect.value.trim() || 
+    zonaSelect.options[zonaSelect.selectedIndex].text.toLowerCase().includes('seleccionar')
+  ) {
     Swal.fire({
       icon: 'warning',
       title: 'Campo zona de entrega incompleto',
