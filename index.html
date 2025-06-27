@@ -197,29 +197,29 @@
 <body>
   <h2>Formulario de Pedido</h2>
 
-  <!-- Sección de Vendedor -->
-  <div class="form-group">
-    <label for="buscador">Buscar Vendedor:</label>
-    <input type="text" id="buscador" placeholder="Buscar vendedor..." />
-  </div>
+<!-- Sección de Vendedor -->
+<div class="form-group">
+  <label for="buscador">Buscar Vendedor:</label>
+  <input type="text" id="buscador" placeholder="Buscar vendedor..." />
+</div>
 
-  <div class="form-group">
-    <label for="vendedor">Vendedor:</label>
-    <select id="vendedor">
-      <!-- Opción eliminada -->
-    </select>
-  </div>
+<div class="form-group">
+  <label for="vendedor">Vendedor:</label>
+  <select id="vendedor">
+    <option value="" disabled selected>Selecciona un vendedor</option>
+  </select>
+</div>
+
 
   <!-- Sección de Cliente -->
   <div class="form-group">
     <label for="buscador-cliente">Buscar Cliente:</label>
     <input type="text" id="buscador-cliente" placeholder="Buscar cliente..." />
   </div>
-
   <div class="form-group">
     <label for="cliente">Cliente:</label>
     <select id="cliente">
-      <!-- Opción eliminada -->
+      <option disabled selected>Selecciona un cliente</option>
     </select>
   </div>
 
@@ -233,7 +233,7 @@
   <div class="form-group">
     <label for="zona-entrega">Zona de Entrega:</label>
     <select id="zona-entrega">
-      <!-- Opción eliminada -->
+      <option disabled selected>Selecciona una zona de entrega</option>
     </select>
   </div>
 
@@ -758,15 +758,25 @@ function agregarProducto() {
   const oferta = document.getElementById('oferta').value.trim();
   const comentarios = document.getElementById('comentarios').value.trim();
 
+  // Cambié esto:
   const vendedorValue = vendedor.value;
   const clienteValue = cliente.value;
   const zonaEntregaValue = zonaEntrega.value;
 
+  // Para mostrar (texto visible)
   const vendedorTexto = vendedor.options[vendedor.selectedIndex]?.text || null;
   const clienteTexto = cliente.options[cliente.selectedIndex]?.text || null;
   const zonaEntregaTexto = zonaEntrega.options[zonaEntrega.selectedIndex]?.text || null;
 
-  // VALIDACIÓN REMOVIDA
+  // Validaciones usando value para detectar opción placeholder vacía
+  if (!vendedorValue || !clienteValue || (!zonaEntregaValue && !otroDestino)) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Campos incompletos',
+      text: 'Por favor completa Vendedor, Cliente y al menos Zona de Entrega u Otro Destino'
+    });
+    return;
+  }
 
   if (productosEnPedido.length === 0) {
     Swal.fire({
@@ -780,9 +790,6 @@ function agregarProducto() {
   const btnGuardar = document.getElementById('guardar-pedido');
   btnGuardar.disabled = true;
   btnGuardar.textContent = 'Guardando...';
-
-  // Resto de la lógica para guardar el pedido...
-}
 
   try {
     const fechaActual = new Date().toISOString();
