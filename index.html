@@ -839,17 +839,65 @@ function agregarProducto() {
   }
 }
 
-  // Llenar información general
+function mostrarResumenPedido() {
   const vendedorSelect = document.getElementById('vendedor');
   const clienteSelect = document.getElementById('cliente');
   const zonaSelect = document.getElementById('zona-entrega');
-  
+
+  // Validar vendedor
+  const vendedorValue = vendedorSelect.value.trim();
+  if (!vendedorValue || vendedorValue.toLowerCase().includes('seleccionar')) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Campo vendedor incompleto',
+      text: 'Por favor selecciona un vendedor válido.',
+      confirmButtonText: 'Entendido'
+    });
+    return;
+  }
+
+  // Validar cliente
+  const clienteValue = clienteSelect.value.trim();
+  if (!clienteValue || clienteValue.toLowerCase().includes('seleccionar')) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Campo cliente incompleto',
+      text: 'Por favor selecciona un cliente válido.',
+      confirmButtonText: 'Entendido'
+    });
+    return;
+  }
+
+  // Validar zona de entrega
+  const zonaValue = zonaSelect.value.trim();
+  if (!zonaValue || zonaValue.toLowerCase().includes('seleccionar')) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Campo zona de entrega incompleto',
+      text: 'Por favor selecciona una zona de entrega válida.',
+      confirmButtonText: 'Entendido'
+    });
+    return;
+  }
+
+  // Validar que haya productos
+  if (productosEnPedido.length === 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Pedido vacío',
+      text: 'No hay productos en el pedido para mostrar el resumen',
+      confirmButtonText: 'Entendido'
+    });
+    return;
+  }
+
+  // Llenar información general
   document.getElementById('resumen-vendedor').textContent = 
     vendedorSelect.options[vendedorSelect.selectedIndex]?.text || '---';
   document.getElementById('resumen-cliente').textContent = 
     clienteSelect.options[clienteSelect.selectedIndex]?.text || '---';
   document.getElementById('resumen-ruta').textContent = 
-    document.getElementById('ruta-reparto').textContent;
+    document.getElementById('ruta-reparto').textContent || '---';
   document.getElementById('resumen-zona').textContent = 
     zonaSelect.options[zonaSelect.selectedIndex]?.text || '---';
   document.getElementById('resumen-otro-destino').textContent = 
