@@ -956,11 +956,15 @@ document.getElementById('resumen-otro-destino').textContent = destinoTexto;
   const total = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
   document.getElementById('resumen-total').textContent = `$${total.toFixed(2)}`;
 
-  // Llenar información adicional
+    // Llenar información adicional
   document.getElementById('resumen-oferta').textContent = 
-    document.getElementById('oferta').value || '---';
+    document.getElementById('oferta').value.trim() || '---';
+  
   document.getElementById('resumen-comentarios').textContent = 
-    document.getElementById('comentarios').value || '---';
+    document.getElementById('comentarios').value.trim() || '---';
+
+  document.getElementById('resumen-enlaces').textContent = 
+    document.getElementById('enlaces').value.trim() || '---';
 
   // Mostrar modal
   document.getElementById('modal-resumen').style.display = 'block';
@@ -968,8 +972,7 @@ document.getElementById('resumen-otro-destino').textContent = destinoTexto;
 
 // Event listeners para el modal
 document.getElementById('resumen-pedido').addEventListener('click', mostrarResumenPedido);
-document.getElementById('resumen-enlaces').textContent = 
-  document.getElementById('enlaces').value.trim() || '---';
+
 document.getElementById('cerrar-modal').addEventListener('click', () => {
   document.getElementById('modal-resumen').style.display = 'none';
 });
@@ -978,13 +981,13 @@ document.querySelector('.close').addEventListener('click', () => {
   document.getElementById('modal-resumen').style.display = 'none';
 });
 
-// Cerrar modal al hacer clic fuera de él
 window.addEventListener('click', (e) => {
   const modal = document.getElementById('modal-resumen');
   if (e.target === modal) {
     modal.style.display = 'none';
   }
 });
+
 
         // Función para limpiar formulario completo (modificada)
     function limpiarFormularioCompleto() {
