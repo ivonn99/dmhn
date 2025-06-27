@@ -874,45 +874,51 @@ function mostrarResumenPedido() {
     return;
   }
 
-  // ✅ Validar destino
-  if (
-    destinoSelect.selectedIndex === 0 || 
-    !destinoSelect.value.trim() || 
-    destinoSelect.options[destinoSelect.selectedIndex].text.toLowerCase().includes('seleccionar')
-  ) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Campo destino incompleto',
-      text: 'Por favor selecciona un destino válido.',
-      confirmButtonText: 'Entendido'
-    });
-    return;
-  }
+  // Validar destino
+if (
+  destinoSelect.selectedIndex === 0 || 
+  !destinoSelect.value.trim() || 
+  destinoSelect.options[destinoSelect.selectedIndex].text.toLowerCase().includes('seleccionar')
+) {
+  Swal.fire({
+    icon: 'warning',
+    title: 'Campo destino incompleto',
+    text: 'Por favor selecciona un destino válido.',
+    confirmButtonText: 'Entendido'
+  });
+  return;
+}
 
-  // Validar que haya productos
-  if (productosEnPedido.length === 0) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Pedido vacío',
-      text: 'No hay productos en el pedido para mostrar el resumen',
-      confirmButtonText: 'Entendido'
-    });
-    return;
-  }
+// Validar que haya productos
+if (productosEnPedido.length === 0) {
+  Swal.fire({
+    icon: 'warning',
+    title: 'Pedido vacío',
+    text: 'No hay productos en el pedido para mostrar el resumen',
+    confirmButtonText: 'Entendido'
+  });
+  return;
+}
 
-  // Llenar información general
-  document.getElementById('resumen-vendedor').textContent = 
-    vendedorSelect.options[vendedorSelect.selectedIndex]?.text || '---';
-  document.getElementById('resumen-cliente').textContent = 
-    clienteSelect.options[clienteSelect.selectedIndex]?.text || '---';
-  document.getElementById('resumen-destino').textContent = 
-    destinoSelect.options[destinoSelect.selectedIndex]?.text || '---'; // 👈 Muestra destino
-  document.getElementById('resumen-ruta').textContent = 
-    document.getElementById('ruta-reparto').textContent || '---';
-  document.getElementById('resumen-zona').textContent = 
-    zonaSelect.options[zonaSelect.selectedIndex]?.text || '---';
-  document.getElementById('resumen-otro-destino').textContent = 
-    document.getElementById('otro-destino').value || '---';
+// Llenar información general
+document.getElementById('resumen-vendedor').textContent = 
+  vendedorSelect.options[vendedorSelect.selectedIndex]?.text || '---';
+document.getElementById('resumen-cliente').textContent = 
+  clienteSelect.options[clienteSelect.selectedIndex]?.text || '---';
+// ❌ NO uses 'resumen-destino'
+
+document.getElementById('resumen-ruta').textContent = 
+  document.getElementById('ruta-reparto').textContent || '---';
+document.getElementById('resumen-zona').textContent = 
+  zonaSelect.options[zonaSelect.selectedIndex]?.text || '---';
+
+// ✅ Mostrar destino final en resumen-otro-destino
+let destinoTexto = destinoSelect.options[destinoSelect.selectedIndex]?.text || '---';
+if (destinoSelect.value === 'Otro') {
+  const otroDestinoInput = document.getElementById('otro-destino').value.trim();
+  destinoTexto = otroDestinoInput || '---';
+}
+document.getElementById('resumen-otro-destino').textContent = destinoTexto;
 
   // Llenar productos
   const tbody = document.querySelector('#resumen-productos tbody');
