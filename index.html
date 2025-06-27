@@ -968,7 +968,8 @@ document.getElementById('resumen-otro-destino').textContent = destinoTexto;
 
 // Event listeners para el modal
 document.getElementById('resumen-pedido').addEventListener('click', mostrarResumenPedido);
-
+document.getElementById('resumen-enlaces').textContent = 
+  document.getElementById('enlaces').value.trim() || '---';
 document.getElementById('cerrar-modal').addEventListener('click', () => {
   document.getElementById('modal-resumen').style.display = 'none';
 });
