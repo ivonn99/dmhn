@@ -849,8 +849,8 @@ function mostrarResumenPedido() {
 
   // Validar vendedor
   if (
-    vendedorSelect.selectedIndex === 0 || 
-    !vendedorSelect.value.trim() || 
+    vendedorSelect.selectedIndex === 0 ||
+    !vendedorSelect.value.trim() ||
     vendedorSelect.options[vendedorSelect.selectedIndex].text.toLowerCase().includes('seleccionar')
   ) {
     Swal.fire({
@@ -864,8 +864,8 @@ function mostrarResumenPedido() {
 
   // Validar cliente
   if (
-    clienteSelect.selectedIndex === 0 || 
-    !clienteSelect.value.trim() || 
+    clienteSelect.selectedIndex === 0 ||
+    !clienteSelect.value.trim() ||
     clienteSelect.options[clienteSelect.selectedIndex].text.toLowerCase().includes('seleccionar')
   ) {
     Swal.fire({
@@ -878,69 +878,69 @@ function mostrarResumenPedido() {
   }
 
   // Validar destino
-// Validar destino
-if (
-  !destinoSelect.value.trim() || 
-  destinoSelect.value.toLowerCase() === 'seleccionar' // Solo si usas opción seleccionar
-) {
-  Swal.fire({
-    icon: 'warning',
-    title: 'Campo destino incompleto',
-    text: 'Por favor selecciona un destino válido.',
-    confirmButtonText: 'Entendido'
-  });
-  return;
-}
-
-// Validar que si seleccionó "Otro", el input esté lleno
-if (destinoSelect.value === 'Otro') {
-  const otroDestinoInput = document.getElementById('otro-destino').value.trim();
-  if (!otroDestinoInput) {
+  if (
+    !destinoSelect.value.trim() ||
+    destinoSelect.value.toLowerCase() === 'seleccionar'
+  ) {
     Swal.fire({
       icon: 'warning',
-      title: 'Otro destino incompleto',
-      text: 'Por favor escribe el otro destino.',
+      title: 'Campo destino incompleto',
+      text: 'Por favor selecciona un destino válido.',
       confirmButtonText: 'Entendido'
     });
     return;
   }
-}
 
-// Validar que haya productos
-if (productosEnPedido.length === 0) {
-  Swal.fire({
-    icon: 'warning',
-    title: 'Pedido vacío',
-    text: 'No hay productos en el pedido para mostrar el resumen',
-    confirmButtonText: 'Entendido'
-  });
-  return;
-}
+  // Validar que si seleccionó "Otro", el input esté lleno
+  if (destinoSelect.value === 'Otro') {
+    const otroDestinoInput = document.getElementById('otro-destino').value.trim();
+    if (!otroDestinoInput) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Otro destino incompleto',
+        text: 'Por favor escribe el otro destino.',
+        confirmButtonText: 'Entendido'
+      });
+      return;
+    }
+  }
 
-// Llenar información general
-document.getElementById('resumen-vendedor').textContent = 
-  vendedorSelect.options[vendedorSelect.selectedIndex]?.text || '---';
-document.getElementById('resumen-cliente').textContent = 
-  clienteSelect.options[clienteSelect.selectedIndex]?.text || '---';
-// 
+  // Validar que haya productos
+  if (productosEnPedido.length === 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Pedido vacío',
+      text: 'No hay productos en el pedido para mostrar el resumen',
+      confirmButtonText: 'Entendido'
+    });
+    return;
+  }
 
-document.getElementById('resumen-ruta').textContent = 
-  document.getElementById('ruta-reparto').textContent || '---';
-document.getElementById('resumen-zona').textContent = 
-  zonaSelect.options[zonaSelect.selectedIndex]?.text || '---';
+  // Llenar información general
+  document.getElementById('resumen-vendedor').textContent =
+    vendedorSelect.options[vendedorSelect.selectedIndex]?.text || '---';
 
-// ✅ Mostrar destino final en resumen-otro-destino
-let destinoTexto = destinoSelect.options[destinoSelect.selectedIndex]?.text || '---';
-if (destinoSelect.value === 'Otro') {
-  const otroDestinoInput = document.getElementById('otro-destino').value.trim();
-  destinoTexto = otroDestinoInput || '---';
-}
-document.getElementById('resumen-otro-destino').textContent = destinoTexto;
+  document.getElementById('resumen-cliente').textContent =
+    clienteSelect.options[clienteSelect.selectedIndex]?.text || '---';
+
+  document.getElementById('resumen-ruta').textContent =
+    document.getElementById('ruta-reparto').textContent || '---';
+
+  document.getElementById('resumen-zona').textContent =
+    zonaSelect.options[zonaSelect.selectedIndex]?.text || '---';
+
+  // Mostrar destino final
+  let destinoTexto = destinoSelect.options[destinoSelect.selectedIndex]?.text || '---';
+  if (destinoSelect.value === 'Otro') {
+    const otroDestinoInput = document.getElementById('otro-destino').value.trim();
+    destinoTexto = otroDestinoInput || '---';
+  }
+  document.getElementById('resumen-otro-destino').textContent = destinoTexto;
 
   // Llenar productos
   const tbody = document.querySelector('#resumen-productos tbody');
   tbody.innerHTML = '';
-  
+
   productosEnPedido.forEach(item => {
     const fila = document.createElement('tr');
     fila.innerHTML = `
@@ -956,21 +956,21 @@ document.getElementById('resumen-otro-destino').textContent = destinoTexto;
   const total = productosEnPedido.reduce((sum, item) => sum + item.monto, 0);
   document.getElementById('resumen-total').textContent = `$${total.toFixed(2)}`;
 
-    // Llenar información adicional
-  document.getElementById('resumen-oferta').textContent = 
+  // Llenar información adicional
+  document.getElementById('resumen-oferta').textContent =
     document.getElementById('oferta').value.trim() || '---';
-  
-  document.getElementById('resumen-comentarios').textContent = 
+
+  document.getElementById('resumen-comentarios').textContent =
     document.getElementById('comentarios').value.trim() || '---';
 
-  document.getElementById('resumen-enlaces').textContent = 
+  document.getElementById('resumen-enlaces').textContent =
     document.getElementById('enlaces').value.trim() || '---';
 
   // Mostrar modal
   document.getElementById('modal-resumen').style.display = 'block';
 }
 
-// Event listeners para el modal
+// ✅ Event listeners para abrir y cerrar modal
 document.getElementById('resumen-pedido').addEventListener('click', mostrarResumenPedido);
 
 document.getElementById('cerrar-modal').addEventListener('click', () => {
@@ -987,7 +987,6 @@ window.addEventListener('click', (e) => {
     modal.style.display = 'none';
   }
 });
-
 
         // Función para limpiar formulario completo (modificada)
     function limpiarFormularioCompleto() {
