@@ -758,7 +758,7 @@ function agregarProducto() {
 
     document.getElementById('buscador-producto').addEventListener('input', filtroProductosDebounced);
 
-    async function guardarPedido() {
+async function guardarPedido() {
   const vendedor = document.getElementById('vendedor');
   const cliente = document.getElementById('cliente');
   const zonaEntrega = document.getElementById('zona-entrega');
@@ -823,14 +823,16 @@ function agregarProducto() {
       return;
     }
 
-    // 2️⃣ Envía señal al Apps Script para importar
+    // 2️⃣ Envía señal al Apps Script para importar SIN JSON (para evitar CORS)
     try {
       await fetch('https://script.google.com/macros/s/AKfycbxI_taThSENcdYcVw_nZtWK2ZdagXiDQMum4A3HOik0sLoGKLSfVfdzCdT6JX62x03o/exec', {
         method: 'POST',
-        body: JSON.stringify({ action: 'importar_pedidos' }),
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body: new URLSearchParams({
+          action: 'importar_pedidos'
+        })
       });
       console.log('✅ Señal enviada a Apps Script para importar desde Supabase.');
     } catch (fetchError) {
@@ -863,7 +865,6 @@ function agregarProducto() {
     btnGuardar.textContent = 'Guardar Pedido';
   }
 }
-
 function mostrarResumenPedido() {
   const vendedorSelect = document.getElementById('vendedor');
   const clienteSelect = document.getElementById('cliente');
