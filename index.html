@@ -5,7 +5,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <title>Formulario de Pedido</title>
 <style>
-/* Estilos generales tipo carta */
+/* Estilos generales tipo carta fija */
 body {
   font-family: Arial, sans-serif;
   background-color: #181818;
@@ -24,19 +24,13 @@ h1, h2, h3 {
   margin: 0 auto;
 }
 
-/* Contenedor de cada bloque tipo carta */
 .form-group {
   background-color: #2c2c2c;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
   padding: 20px;
   margin: 20px 0;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.form-group:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+  /* Efecto fijo: sin hover de movimiento */
 }
 
 label {
@@ -74,6 +68,11 @@ button:hover {
   background-color: #007bb5;
 }
 
+/* Contenedor para tablas responsivas */
+.table-responsive {
+  overflow-x: auto;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -81,6 +80,7 @@ table {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  min-width: 600px; /* Mínimo ancho para evitar que se deforme */
 }
 
 th, td {
@@ -122,6 +122,17 @@ tr:hover {
 
 .close:hover {
   color: #fff;
+}
+
+/* Ajuste para móviles: tablas con scroll horizontal */
+@media screen and (max-width: 768px) {
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 600px; /* Mantiene ancho mínimo */
+  }
 }
 </style>
 </head>
@@ -217,9 +228,10 @@ tr:hover {
     <button id="agregar-producto" type="button">Agregar Producto</button>
   </div>
 
-  <!-- Lista de productos en tabla -->
-  <div class="form-group">
-    <h3>Productos en el Pedido:</h3>
+<!-- Lista de productos en tabla -->
+<div class="form-group">
+  <h3>Productos en el Pedido:</h3>
+  <div class="table-responsive">
     <table id="lista-productos">
       <thead>
         <tr>
@@ -235,6 +247,8 @@ tr:hover {
       </tbody>
     </table>
   </div>
+</div>
+
 
   <!-- Monto total del pedido completo -->
   <div class="form-group">
