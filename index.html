@@ -766,12 +766,13 @@ async function guardarPedido() {
   const otroDestino = document.getElementById('otro-destino').value.trim();
   const oferta = document.getElementById('oferta').value.trim();
   const comentarios = document.getElementById('comentarios').value.trim();
-  const enlaces = document.getElementById('enlaces').value.trim();
+  const enlaces = document.getElementById('enlaces').value.trim();  // <== Aquí
 
   const vendedorTexto = vendedor.options[vendedor.selectedIndex]?.text || null;
   const clienteTexto = cliente.options[cliente.selectedIndex]?.text || null;
   const zonaEntregaTexto = zonaEntrega.options[zonaEntrega.selectedIndex]?.text || null;
 
+  // Solo validar productos
   if (productosEnPedido.length === 0) {
     Swal.fire({
       icon: 'warning',
@@ -790,23 +791,22 @@ async function guardarPedido() {
     const pedidoId = Date.now();
 
     const insertData = productosEnPedido.map(item => ({
-      pedido_id: pedidoId,
-      cliente: clienteTexto,
-      vendedor: vendedorTexto,
-      producto: item.nombre,
-      zona_entrega: zonaEntregaTexto,
-      cantidad: item.cantidad,
-      precio: item.precio,
-      monto: item.monto,
-      fecha: fechaActual,
-      ruta_reparto: rutaReparto !== '---' ? rutaReparto : null,
-      otro_destino: otroDestino || null,
-      oferta: oferta || null,
-      comentarios: comentarios || null,
-      enlaces: enlaces || null
-    }));
+  pedido_id: pedidoId,
+  cliente: clienteTexto,
+  vendedor: vendedorTexto,
+  producto: item.nombre,
+  zona_entrega: zonaEntregaTexto,
+  cantidad: item.cantidad,
+  precio: item.precio,
+  monto: item.monto,
+  fecha: fechaActual,
+  ruta_reparto: rutaReparto !== '---' ? rutaReparto : null,
+  otro_destino: otroDestino || null,
+  oferta: oferta || null,
+  comentarios: comentarios || null,
+  enlaces: enlaces || null   // ✅ Nuevo campo
+}));
 
-    // 1️⃣ Guarda en Supabase
     const { data, error } = await supabase
       .from('pedidos')
       .insert(insertData);
@@ -821,22 +821,6 @@ async function guardarPedido() {
       btnGuardar.disabled = false;
       btnGuardar.textContent = 'Guardar pedido';
       return;
-    }
-
-    // 2️⃣ Envía señal al Apps Script para importar SIN JSON (para evitar CORS)
-    try {
-      await fetch('https://script.google.com/macros/s/AKfycbxI_taThSENcdYcVw_nZtWK2ZdagXiDQMum4A3HOik0sLoGKLSfVfdzCdT6JX62x03o/exec', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        },
-        body: new URLSearchParams({
-          action: 'importar_pedidos'
-        })
-      });
-      console.log('✅ Señal enviada a Apps Script para importar desde Supabase.');
-    } catch (fetchError) {
-      console.error('❌ Error al enviar señal a Apps Script:', fetchError);
     }
 
     const totalProductos = productosEnPedido.length;
@@ -865,6 +849,7 @@ async function guardarPedido() {
     btnGuardar.textContent = 'Guardar Pedido';
   }
 }
+
 function mostrarResumenPedido() {
   const vendedorSelect = document.getElementById('vendedor');
   const clienteSelect = document.getElementById('cliente');
